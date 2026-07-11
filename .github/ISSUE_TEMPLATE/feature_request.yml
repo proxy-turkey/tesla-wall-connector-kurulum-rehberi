@@ -1,0 +1,20 @@
+name: 💡 İyileştirme Önerisi
+description: Rehbere eklenebilecek yeni bölüm veya iyileştirme öner
+title: "[ÖNERİ] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: oneri
+    attributes:
+      label: Öneriniz nedir?
+      description: Ne eklenmesini veya iyileştirilmesini öneriyorsunuz?
+      placeholder: "Örn: Kış aylarında kondensasyon önleme için bir bölüm eklenebilir"
+    validations:
+      required: true
+  - type: textarea
+    id: gerekce
+    attributes:
+      label: Neden faydalı olur?
+      placeholder: "Çiftlik/kırsal kurulumlarda sıklıkla karşılaşılan bir sorun..."
+    validations:
+      required: true

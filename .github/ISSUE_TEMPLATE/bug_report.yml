@@ -1,0 +1,33 @@
+name: 🐛 Hata Bildirimi
+description: Rehberde yanlış/eksik bilgi veya teknik hata bildir
+title: "[HATA] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Bu rehber topluluk katkılarına açıktır. Lütfen sadece bilgiSEL/teknik hataları bildirin.
+        🔒 **Kurulum yaptığınızda yaşadığınız sorunlar için issue açmayın** — bu bir bilgi rehberidir, teknik destek sağlamıyoruz.
+  - type: textarea
+    id: hata
+    attributes:
+      label: Hata nerede?
+      description: Hangi dosyada, hangi bölümde yanlış/eksik bilgi var?
+      placeholder: "Örn: summary.md'de ENTES eşik voltajları yanlış yazılmış"
+    validations:
+      required: true
+  - type: textarea
+    id: duzeltme
+    attributes:
+      label: Doğrusu ne olmalı?
+      description: İlgili kaynağı (katalog, kılavuz, standart) belirtirseniz hızlı merge alırsınız.
+      placeholder: "Örn: ENTES GKRC-02F katalog sayfa 12'ye göre düşük gerilim 207V değil..."
+    validations:
+      required: true
+  - type: input
+    id: kaynak
+    attributes:
+      label: Kaynak (varsa)
+      placeholder: "Siemens 5SL katalog PDF, sayfa X"
+    validations:
+      required: false

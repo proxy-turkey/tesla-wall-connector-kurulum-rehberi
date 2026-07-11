@@ -75,4 +75,4 @@ Bu rehber, aşağıdaki kurulum mimarisini tarif eder:
 
 Bu proje [MIT Lisansı](LICENSE) altında yayınlanmıştır.
 
-"Tesla", "Wall Connector" ve ilgili markalar Tesla, Inc.'e aittir. Bu proje Tesla, Inc. ile bağlantılı veya onun tarafından onaylanmış değildir. Tesla ürün spesifikasyonları ve kurulum kılavuzu © Tesla, Inc.'dir.
+"Tesla", "Wall Connector" ve ilgili markalar Tesla, Inc.'e aittir. Bu proje Tesla, Inc. ile bağlantılı veya onun tarafından onaylanmış değildir. Detaylar için [NOTICE.md](NOTICE.md).
