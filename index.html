@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tesla Wall Connector Kurulum Rehberi</title>
+<style>
+  :root {
+    --bg: #0b0f14;
+    --surface: #141a22;
+    --surface2: #1c2530;
+    --surface3: #263040;
+    --border: #2a3648;
+    --text: #e2e8f0;
+    --text-dim: #8899b0;
+    --accent: #e82127;
+    --accent2: #f5a623;
+    --green: #22c55e;
+    --blue: #3b82f6;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --cyan: #06b6d4;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --mono: 'Cascadia Code', 'JetBrains Mono', 'Fira Code', monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: sticky; top:0; z-index:100;
+    background: rgba(11,15,20,.92); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    display: flex; gap:0; overflow-x:auto;
+    padding: 0 16px;
+  }
+  nav a {
+    color: var(--text-dim); text-decoration: none;
+    padding: 14px 16px; font-size: .82rem; font-weight:500;
+    white-space: nowrap; border-bottom: 2px solid transparent;
+    transition: .2s;
+  }
+  nav a:hover { color: var(--text); border-color: var(--accent2); }
+  nav a.active { color: var(--accent2); border-color: var(--accent2); }
+
+  /* ─── LAYOUT ─── */
+  .container { max-width: 1200px; margin:0 auto; padding: 24px 20px 80px; }
+  section { margin-bottom: 56px; }
+  h2 {
+    font-size: 1.6rem; font-weight: 700;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 24px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  h2 .icon { font-size: 1.4rem; }
+  h3 {
+    font-size: 1.15rem; font-weight: 600; color: var(--accent2);
+    margin: 28px 0 12px;
+  }
+  h4 { font-size: 1rem; font-weight:600; color:var(--cyan); margin:20px 0 8px; }
+  p, li { color: var(--text-dim); }
+  a { color: var(--cyan); }
+
+  /* ─── HERO ─── */
+  .hero {
+    text-align: center; padding: 40px 0 32px;
+    border-bottom: 1px solid var(--border); margin-bottom: 40px;
+  }
+  .hero h1 {
+    font-size: 2.2rem; font-weight: 800;
+    background: linear-gradient(135deg,var(--accent2),var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p { font-size: 1.05rem; margin-top: 8px; max-width:700px; margin-inline:auto; }
+
+  /* ─── CARDS ─── */
+  .card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; }
+  .card {
+    background: var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding: 20px; transition: .2s;
+  }
+  .card:hover { border-color: var(--accent2); }
+  .card .title { font-weight:600; color:var(--text); margin-bottom:6px; }
+  .card .sub { font-size:.85rem; color:var(--text-dim); }
+
+  /* ─── MATERIAL TABLE ─── */
+  .mat-table { width:100%; border-collapse:collapse; font-size:.88rem; }
+  .mat-table th {
+    background: var(--surface2); color: var(--text-dim); font-weight:600;
+    padding: 10px 12px; text-align:left; border-bottom:2px solid var(--border);
+  }
+  .mat-table td {
+    padding: 8px 12px; border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  .mat-table tr:hover td { background: var(--surface2); }
+  .mat-table td:first-child { white-space:nowrap; }
+  .badge {
+    display:inline-block; font-size:.7rem; font-weight:600;
+    padding: 2px 8px; border-radius:4px;
+  }
+  .badge-primary { background: #1a3a5c; color: var(--blue); }
+  .badge-warn { background: #3a2c10; color: var(--amber); }
+  .badge-green { background: #0f2e1a; color: var(--green); }
+
+  /* ─── DIAGRAM SVG ─── */
+  .diagram-box {
+    background: var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding: 16px; overflow-x:auto; margin:12px 0;
+  }
+  .diagram-box svg { display:block; margin:0 auto; max-width:100%; height:auto; }
+
+  /* ─── STEPS ─── */
+  .step { display:flex; gap:16px; margin-bottom:20px; }
+  .step-num {
+    flex-shrink:0; width:36px; height:36px; border-radius:50%;
+    background: var(--accent2); color: #000; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+    font-size:.9rem;
+  }
+  .step-body { flex:1; }
+  .step-body p { margin-bottom:6px; }
+
+  /* ─── WARNING / INFO BOXES ─── */
+  .warning {
+    background: #2a1008; border-left:4px solid var(--red);
+    padding: 14px 18px; border-radius:0 8px 8px 0; margin:16px 0;
+  }
+  .warning p { color: #fca5a5; }
+  .info {
+    background: #0a1a2e; border-left:4px solid var(--blue);
+    padding: 14px 18px; border-radius:0 8px 8px 0; margin:16px 0;
+  }
+  .info p { color: #93c5fd; }
+  .tip {
+    background: #0a2e1a; border-left:4px solid var(--green);
+    padding: 14px 18px; border-radius:0 8px 8px 0; margin:16px 0;
+  }
+  .tip p { color: #86efac; }
+  .strong { color:var(--text); font-weight:600; }
+
+  /* ─── LED TABLE ─── */
+  .led-table { width:100%; border-collapse:collapse; font-size:.85rem; }
+  .led-table th {
+    background: var(--surface2); color: var(--text-dim); font-weight:600;
+    padding: 8px 10px; text-align:left; border-bottom:2px solid var(--border);
+  }
+  .led-table td {
+    padding: 7px 10px; border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  .led-table tr:hover td { background: var(--surface2); }
+  .led { display:inline-flex; gap:3px; align-items:center; }
+  .led-dot { width:14px; height:14px; border-radius:50%; display:inline-block; }
+  .led-dot.red { background:var(--red); box-shadow:0 0 6px var(--red); }
+  .led-dot.green { background:var(--green); box-shadow:0 0 6px var(--green); }
+  .led-dot.blue { background:var(--blue); box-shadow:0 0 6px var(--blue); }
+  .led-dot.yellow { background:var(--amber); box-shadow:0 0 6px var(--amber); }
+  .led-dot.off { background:#333; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width:680px) {
+    .hero h1 { font-size:1.5rem; }
+    .card-grid { grid-template-columns:1fr; }
+    .mat-table, .led-table { font-size:.78rem; }
+    .mat-table td, .mat-table th, .led-table td, .led-table th { padding:6px 8px; }
+  }
+
+  /* ─── TOGGLE ─── */
+  .toggle-target { display:none; }
+  .toggle-target.open { display:block; }
+  .toggle-btn {
+    cursor:pointer; user-select:none;
+    background:var(--surface2); border:1px solid var(--border);
+    color:var(--text); padding:10px 16px; border-radius:8px;
+    font-weight:600; font-size:.9rem; display:inline-flex; align-items:center; gap:8px;
+    transition:.2s; margin-bottom:12px;
+  }
+  .toggle-btn:hover { border-color:var(--accent2); }
+  .toggle-btn::after { content:'▾'; transition:.3s; }
+  .toggle-btn.open::after { transform:rotate(180deg); }
+
+  /* ─── WIRE COLOR DOTS ─── */
+  .wire { display:inline-flex; align-items:center; gap:4px; font-family:var(--mono); font-size:.82rem; }
+  .wire-dot { width:12px; height:12px; border-radius:50%; display:inline-block; border:1px solid rgba(255,255,255,.15); }
+
+  /* ─── TABS ─── */
+  .tabs { display:flex; gap:0; margin-bottom:0; overflow-x:auto; }
+  .tab-btn {
+    padding: 10px 20px; background: var(--surface2);
+    border: 1px solid var(--border); border-bottom: none;
+    color: var(--text-dim); cursor:pointer; font-weight:500;
+    white-space:nowrap; transition:.2s;
+    border-radius: 8px 8px 0 0;
+  }
+  .tab-btn:hover { color: var(--text); background: var(--surface3); }
+  .tab-btn.active { background: var(--surface); color: var(--accent2); border-color: var(--accent2); }
+  .tab-content { display:none; background: var(--surface); border:1px solid var(--border); border-radius: 0 8px 8px 8px; padding:20px; }
+  .tab-content.active { display:block; }
+
+  /* ─── FLOW DIAGRAM (PIPELINE) ─── */
+  .flow-pipe { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:4px 8px; margin:12px 0; }
+  .flow-box { background:var(--surface); border:1.5px solid var(--border); border-radius:8px; padding:8px 12px; text-align:center; min-width:90px; }
+  .flow-box .f-title { font-size:.8rem; font-weight:600; color:var(--text); }
+  .flow-box .f-sub { font-size:.65rem; color:var(--text-dim); display:block; margin-top:2px; font-family:var(--mono); }
+  .flow-box.mcb { border-color:var(--red); box-shadow:0 0 8px rgba(239,68,68,.15); }
+  .flow-box.rcd { border-color:var(--green); box-shadow:0 0 8px rgba(34,197,94,.15); }
+  .flow-box.ct { border-color:var(--amber); box-shadow:0 0 8px rgba(245,158,11,.15); }
+  .flow-box.entes { border-color:var(--cyan); box-shadow:0 0 8px rgba(6,182,212,.15); }
+  .flow-box.parafudr { border-color:var(--amber); border-style:dashed; box-shadow:0 0 8px rgba(245,158,11,.1); }
+  .flow-box.wc { background:linear-gradient(135deg,#e82127,#f5a623); border-color:transparent; }
+  .flow-box.wc .f-title { color:#000; }
+  .flow-box.wc .f-sub { color:#333; }
+  .flow-box.fuse { border-color:var(--red); min-width:60px; }
+  .flow-arrow { font-size:1.2rem; color:var(--text-dim); padding:0 2px; user-select:none; }
+  .flow-branch { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; margin:6px 0 6px 40px; padding:8px 12px; background:var(--surface2); border-radius:8px; border-left:3px solid var(--amber); }
+  .flow-branch-label { font-size:.7rem; font-weight:600; color:var(--amber); }
+  .flow-info { background:var(--surface2); border-left:3px solid var(--cyan); border-radius:0 6px 6px 0; padding:10px 14px; margin:10px 0; font-size:.82rem; color:var(--text-dim); }
+  .flow-group { display:flex; flex-wrap:wrap; align-items:center; gap:4px 8px; padding:8px 12px; margin:6px 0; background:var(--surface2); border-radius:8px; }
+
+  /* ─── COMPACT TERMINAL BLOCK ─── */
+  .term-block {
+    font-family: var(--mono); font-size:.82rem;
+    background: #000; border:1px solid var(--border); border-radius:6px;
+    overflow:hidden; margin:8px 0;
+  }
+  .term-row {
+    display:flex; border-bottom:1px solid var(--border);
+    padding: 5px 12px;
+  }
+  .term-row:last-child { border-bottom:none; }
+  .term-label { width:80px; flex-shrink:0; font-weight:600; color:var(--text-dim); }
+  .term-value { flex:1; }
+
+  /* ─── PRINT ─── */
+  @media print {
+    nav { display:none; }
+    body { background:#fff; color:#000; }
+    .card, .diagram-box, .warning, .info, .tip, .tab-content { background:#f8f9fa; border-color:#ccc; }
+    h2 { border-color:#ccc; }
+    .step-num { background:#000; color:#fff; }
+    .mat-table th { background:#e9ecef; }
+    .container { padding:16px; }
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+  ::-webkit-scrollbar-thumb:hover { background:var(--text-dim); }
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="#genel" class="active">Genel Bakış</a>
+  <a href="#malzemeler">Malzemeler</a>
+  <a href="#tek-hat">Tek Hat Şeması</a>
+  <a href="#kumanda">Kumanda Şeması</a>
+  <a href="#pano">Pano İçi</a>
+  <a href="#fiziksel">Fiziksel Yerleşim</a>
+  <a href="#montaj">Montaj</a>
+  <a href="#topraklama">Topraklama</a>
+  <a href="#komisyonlama">Komisyonlama</a>
+  <a href="#led">LED Kodları</a>
+  <a href="#safety">Güvenlik</a>
+</nav>
+
+<div class="container">
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <h1>⚡ Tesla Wall Connector Kurulum Rehberi</h1>
+  <p>11 kW Trifaze · TT Şebeke · IP65 Pano · Tam Kapsamlı Adım Adım Kılavuz</p>
+  <p style="font-size:.85rem; margin-top:6px; color:var(--text-dim);">
+    Araç: Tesla EV · Trifaze 16A OBC · WiFi Yok (Hosted AP ile kurulum)<br>
+    Tesla WC Gen 3 · 7.3m Kablo · 6.8 kg (wirebox dahil) · -30°C ~ +50°C
+  </p>
+</div>
+
+<!-- ═══ 1 — GENEL BAKIŞ ═══ -->
+<section id="genel">
+  <h2><span class="icon">📋</span> Genel Bakış</h2>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="title">🔌 Şarj Gücü</div>
+      <div class="sub">11 kW AC · 3-faz 400V L-L<br>16A sürekli yük (40A Siemens Kesici)</div>
+    </div>
+    <div class="card">
+      <div class="title">⚡ Şebeke Tipi</div>
+      <div class="sub">TT Şebeke · <strong>İzole TT Adası:</strong> Ana panodan gelen PE damarı lokal panoda kesinlikle bağlanmayacak, körlenecek (Exported Fault Koruması).<br>Teknik Gerekçe: Kırsal şebekelerdeki 'Taşınan Hata Gerilimi' riskine karşı aracı korumak amacıyla bilinçli olarak tasarlanmış müstakil güvenlik mimarisidir.<br>Yerel topraklama sadece 3× Q20 çubuk + bentonit ile oluşturulur (exported fault koruması)</div>
+    </div>
+    <div class="card">
+      <div class="title">📦 Pano</div>
+      <div class="sub">Çetinkaya CP 5107 · 3 Sıra × 15 Modül · IP65<br>Opak kapaklı ABS, RAL 7030 Gri</div>
+    </div>
+    <div class="card">
+      <div class="title">🌦️ Koruma</div>
+      <div class="sub">Citel Tip I+II+III 100kA parafudr<br>Siemens 63A/30mA Tip A kaçak akım</div>
+    </div>
+    <div class="card">
+      <div class="title">🌍 Topraklama</div>
+      <div class="sub">3× Q20 1.5m çubuk · üçgen şeklinde<br>25mm² örgülü kablo · bentonit</div>
+    </div>
+    <div class="card">
+      <div class="title">📡 WiFi</div>
+      <div class="sub">Yok — Tesla One AP ile komisyonlama<br>WC kendi SSID'sini yayınlar</div>
+    </div>
+  </div>
+
+  <div class="warning">
+    <p><strong>⚠️ ÖNEMLİ:</strong> Bu kılavuz bilgilendirme amaçlıdır. Elektrik tesisatı yetkili ve sertifikalı bir elektrikçi tarafından yapılmalıdır. Tesla WC garantisi yanlış kurulumda geçersiz kalır. Tüm bağlantıları yapmadan önce ana şalteri KAPATIN.</p>
+  </div>
+</section>
+
+<!-- ═══ 2 — MALZEMELER ═══ -->
+<section id="malzemeler">
+  <h2><span class="icon">🧰</span> Malzeme Listesi</h2>
+
+  <button class="toggle-btn open" onclick="this.classList.toggle('open');document.getElementById('mat-list').classList.toggle('open')">
+    Malzeme Tablosunu Göster/Gizle
+  </button>
+
+  <div id="mat-list" class="toggle-target open">
+    <table class="mat-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Kategori</th>
+          <th>Malzeme</th>
+          <th>Adet</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td><span class="badge badge-primary">Pano</span></td><td>Çetinkaya CP 5107 ABS Dağıtım Panosu (Opak Kapaklı, IP65, 3 Sıra x 15 Modül = 45 Otomat Kapasiteli, 35×50×19.5 cm, RAL 7030 Gri)</td><td>1</td></tr>
+        <tr><td>2</td><td><span class="badge badge-primary">Koruma</span></td><td>Citel DS104RS-230/G/TR 100kA 4P B+C+D (Tip I+II+III) Parafudr <strong>[SPD1]</strong></td><td>1</td></tr>
+        <tr><td>3</td><td><span class="badge badge-warn">Sigorta</span></td><td>Siemens 5SL6650-7YA (4P, 50A, C, 6kA) — Ana Pano <strong>[QF1]</strong></td><td>1</td></tr>
+        <tr><td>4</td><td><span class="badge badge-warn">Sigorta</span></td><td>Siemens 5SL6640-7YA (4P, 40A, C, 6kA) — WC Panosu <strong>[QF2]</strong></td><td>1</td></tr>
+        <tr><td>5</td><td><span class="badge badge-warn">Kaçak</span></td><td>Siemens 5SV3346-6 (4P, 63A, 30mA, Tip A) <strong>[FI1]</strong></td><td>1</td></tr>
+        <tr><td>6</td><td><span class="badge badge-primary">Röle</span></td><td>ENTES GKRC-02F Gerilim Koruma Rölesi <strong>[K1]</strong></td><td>1</td></tr>
+        <tr><td>7</td><td><span class="badge badge-primary">Kontaktör</span></td><td>Siemens 5TT5840-0 (4NO, 40A, 230V bobin, AC-1 sınıfı) <strong>[KM1]</strong></td><td>1</td></tr>
+        <tr><td>8</td><td><span class="badge badge-warn">Sigorta</span></td><td>Siemens 5SL6102-7 (1P, 2A, C, 6kA) — Kumanda Sigortası <strong>[F1]</strong></td><td>1</td></tr>
+        <tr><td>9</td><td><span class="badge badge-green">Toprak</span></td><td>Q20 mm × 1.5 m topraklama çubuğu (250µ kaplama)</td><td>3</td></tr>
+        <tr><td>10</td><td><span class="badge badge-green">Toprak</span></td><td>25mm² örgülü som bakır topraklama kablosu</td><td>12 m</td></tr>
+        <tr><td>11</td><td><span class="badge badge-green">Toprak</span></td><td>Bentonit direnç düşürücü toz</td><td>10 kg</td></tr>
+        <tr><td>12</td><td><span class="badge badge-green">Toprak</span></td><td>Topraklama test klemensi</td><td>1</td></tr>
+        <tr><td>13</td><td><span class="badge badge-primary">Kablo</span></td><td>5×6mm² NYY besleme kablosu</td><td>5 m</td></tr>
+        <tr><td>14</td><td><span class="badge badge-primary">Kablo</span></td><td>6mm² NYAF Pano İçi Güç Köprüleri (Kahve/Siyah/Gri/Mavi — 4 farklı renk × 3'er metre olmak üzere toplam 12 metre)</td><td>12 m</td></tr>
+        <tr><td>15</td><td><span class="badge badge-primary">Kablo</span></td><td>1.5mm² NYAF kumanda kablosu</td><td>2 m</td></tr>
+        <tr><td>16</td><td><span class="badge">Aksesuar</span></td><td>Nötr barası — DIN ray, en az 6 delikli</td><td>1</td></tr>
+        <tr><td>17</td><td><span class="badge">Aksesuar</span></td><td>Toprak barası — DIN ray, en az 6 delikli</td><td>1</td></tr>
+        <tr><td>18</td><td><span class="badge">Aksesuar</span></td><td>İzoleli yüksük 6mm² + ikiz yüksük</td><td>20</td></tr>
+        <tr><td>19</td><td><span class="badge">Aksesuar</span></td><td>İzoleli yüksük 1.5mm²</td><td>10</td></tr>
+        <tr><td>20</td><td><span class="badge">Aksesuar</span></td><td>Rakor PG21 (pano giriş + WC bağlantısı)</td><td>4</td></tr>
+        <tr><td>21</td><td><span class="badge">Aksesuar</span></td><td>Topraklama çubuk klemensi 25mm²</td><td>3</td></tr>
+        <tr><td>22</td><td><span class="badge">Aksesuar</span></td><td>Çelik spiral boru — Ø25mm (PG21 Rakor ile %100 Uyumlu) — <strong>3 parça halinde:</strong> 5m (ana besleme) + 0.5m (pano-WC ara geçiş) + ~4.5m (topraklama kablosu koruma)</td><td>10 m</td></tr>
+        <tr><td>23</td><td><span class="badge">Aksesuar</span></td><td>6mm Beton Dübel (Tesla WC wirebox'ı duvara sabitlemek için — kutu içeriğinde 2 adet vida vardır)</td><td>2</td></tr>
+        <tr><td>24</td><td><span class="badge">Aksesuar</span></td><td>8mm veya 10mm Ağır Hizmet Roket/Çelik Dübel (Metal Pano gövdesi için)</td><td>4</td></tr>
+        <tr><td>25</td><td><span class="badge">Aksesuar</span></td><td>Uyarı etiketi</td><td>1</td></tr>
+        <tr><td>26</td><td><span class="badge">Aksesuar</span></td><td>Kablo bağı</td><td>10</td></tr>
+        <tr><td>27</td><td><span class="badge">Aksesuar</span></td><td>Isı shrink (yapışkanlı)</td><td>4</td></tr>
+        <tr><td>28</td><td><span class="badge">Aksesuar</span></td><td>Beton Çivili Çelik Kroşe (spiral boru ve kabloların beton duvara sabitlenmesi için)</td><td>15</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="margin-top:32px;">🛠️ Saha Sarf Malzemeleri ve Kurulum Aletleri <span style="font-size:.75rem; color:var(--accent2); font-weight:400;">(Ustanın/Elektrikçinin Tedarik Etmesi Gerekenler)</span></h3>
+  <table class="mat-table">
+    <thead>
+      <tr><th>#</th><th>Kategori</th><th>Malzeme / Alet</th><th>Adet</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>A1</td><td><span class="badge badge-warn">Sarf</span></td><td><strong>Bakır Gresi (Copper Grease)</strong> — Topraklama kelepçelerinin galvanik korozyon koruması için sarf malzeme</td><td>1 Tüp</td></tr>
+      <tr><td>A2</td><td><span class="badge badge-warn">Alet</span></td><td><strong>Torklu Tornavida / Tork Anahtarı</strong> — Tesla WC wirebox terminalleri (5.6 Nm) ve şalt cihazları (üretici kataloğu, tipik 2.5–3.0 Nm) için zorunlu alet</td><td>1</td></tr>
+      <tr><td>A3</td><td><span class="badge badge-warn">Alet</span></td><td><strong>Topraklama Direnci Ölçüm Cihazı (Toprak Megeri)</strong> — 3 Nokta yöntemiyle gerçek topraklama direncinin ölçülmesi için zorunlu cihaz (Multimetre ile ölçülemez)</td><td>1</td></tr>
+      <tr><td>A4</td><td><span class="badge badge-warn">Alet</span></td><td><strong>Darbeli Matkap (Hilti) ve Duvar Tipi Uygun Elmas Matkap Uçları</strong> — Beton duvar delme işlemleri için zorunlu alet</td><td>1 Set</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══ 3 — TEK HAT ŞEMASI ═══ -->
+<section id="tek-hat">
+  <h2><span class="icon">🔌</span> Tek Hat Şeması (Single-Line Diagram)</h2>
+  <p>Ana panodan WC panosuna çekilen bağımsız hat. Tüm koruma ve kumanda elemanları WC panosu içinde.</p>
+
+  <div class="diagram-box">
+    <svg viewBox="0 0 900 700" xmlns="http://www.w3.org/2000/svg" style="background:#0d1117;border-radius:8px;">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#e2e8f0"/>
+        </marker>
+        <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e82127"/><stop offset="1" stop-color="#f5a623"/></linearGradient>
+      </defs>
+
+      <!-- Title -->
+      <text x="30" y="28" fill="#8899b0" font-size="11" font-family="monospace">ŞEBEKE 3×400V + N (TT) — ANA GÜÇ YOLU (KALIN): soldaki ana dikey hat</text>
+
+      <!-- ═══ MAIN POWER BUS (thick vertical) ═══ -->
+      <!-- Main bus represented as a vertical bar for L1-L2-L3 bundle -->
+      <rect x="108" y="40" width="12" height="630" fill="none" stroke="#e2e8f0" stroke-width="3" rx="2"/>
+      <text x="94" y="45" fill="#e2e8f0" font-size="9" font-family="monospace">L1 L2 L3</text>
+
+      <!-- N bus (dashed, parallel) -->
+      <line x1="148" y1="40" x2="148" y2="670" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,3"/>
+      <text x="154" y="45" fill="#3b82f6" font-size="9" font-family="monospace">N</text>
+
+      <!-- PE bus -->
+      <line x1="195" y1="40" x2="195" y2="670" stroke="#22c55e" stroke-width="2"/>
+      <text x="201" y="45" fill="#22c55e" font-size="9" font-family="monospace">PE</text>
+
+      <!-- ═══ SERIES COMPONENTS (on main bus) ═══ -->
+      <!-- 1. Ana Pano 50A MCB -->
+      <rect x="55" y="70" width="112" height="36" rx="4" fill="#1a2230" stroke="#e82127" stroke-width="1.5"/>
+      <text x="65" y="92" fill="#e82127" font-size="9" font-weight="bold">4P 50A C (Ana)</text>
+
+      <!-- Lines in/out 50A -->
+      <line x1="111" y1="40" x2="111" y2="70" stroke="#e2e8f0" stroke-width="3"/>
+      <line x1="111" y1="106" x2="111" y2="145" stroke="#e2e8f0" stroke-width="3"/>
+
+      <!-- Cable label -->
+      <text x="25" y="130" fill="#8899b0" font-size="9" font-family="monospace">5×6mm² NYY</text>
+      <text x="25" y="142" fill="#8899b0" font-size="8" font-family="monospace">(spiral boru)</text>
+
+      <!-- 2. WC MCB 40A (NOT the 50A — main bus skips parafudr!) -->
+      <rect x="55" y="155" width="112" height="36" rx="4" fill="#1a2230" stroke="#e82127" stroke-width="1.5"/>
+      <text x="62" y="175" fill="#e82127" font-size="9" font-weight="bold">QF2: 4P 40A C (WC)</text>
+      <text x="68" y="186" fill="#8899b0" font-size="7">Siemens 5SL6640-7YA</text>
+
+      <line x1="111" y1="145" x2="111" y2="155" stroke="#e2e8f0" stroke-width="3"/>
+
+      <!-- 3. RCD 63A 30mA -->
+      <rect x="55" y="245" width="112" height="36" rx="4" fill="#1a2230" stroke="#22c55e" stroke-width="1.5"/>
+      <text x="58" y="265" fill="#22c55e" font-size="8" font-weight="bold">FI1: 4P 63A 30mA Tip A</text>
+      <text x="68" y="276" fill="#8899b0" font-size="7">Siemens 5SV3346-6</text>
+
+      <line x1="111" y1="191" x2="111" y2="245" stroke="#e2e8f0" stroke-width="3"/>
+
+      <!-- 4. Kontaktör -->
+      <rect x="55" y="340" width="112" height="36" rx="4" fill="#1a2230" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="60" y="358" fill="#f59e0b" font-size="8" font-weight="bold">KM1: Kontaktör 4NO 40A</text>
+      <text x="68" y="371" fill="#8899b0" font-size="7">Siemens 5TT5840-0</text>
+
+      <line x1="111" y1="281" x2="111" y2="340" stroke="#e2e8f0" stroke-width="3"/>
+      <line x1="111" y1="376" x2="111" y2="430" stroke="#e2e8f0" stroke-width="3"/>
+
+      <!-- 5. Tesla WC -->
+      <rect x="45" y="440" width="132" height="44" rx="8" fill="url(#g1)" opacity=".9"/>
+      <text x="60" y="464" fill="#000" font-size="11" font-weight="900">TESLA WC (Gen 3)</text>
+      <text x="65" y="478" fill="#000" font-size="8" font-weight="700">L1 L2 L3 N PE · 16A</text>
+
+      <!-- ═══ PARALLEL BRANCH 1: PARAFUDR ═══ -->
+      <!-- Tap from main bus (between 50A MCB and 40A MCB) going right -->
+      <line x1="120" y1="120" x2="260" y2="120" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <line x1="148" y1="120" x2="260" y2="120" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <line x1="195" y1="120" x2="260" y2="120" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+      <!-- Parafudr box -->
+      <rect x="270" y="90" width="180" height="50" rx="6" fill="#1a2230" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="280" y="112" fill="#f59e0b" font-size="10" font-weight="bold">SPD1: Parafudr (PARALEL BRANŞMAN)</text>
+      <text x="280" y="126" fill="#8899b0" font-size="9">Citel DS104RS-230/G/TR 100kA 4P</text>
+      <text x="280" y="138" fill="#8899b0" font-size="8">Tip I+II+III (B+C+D) — L1-L2-L3-N → PE</text>
+
+      <!-- Down arrow from parafudr to PE -->
+      <line x1="360" y1="140" x2="360" y2="500" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="360" y1="500" x2="195" y2="500" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+      <!-- ═══ PARALLEL BRANCH 2: ENTES GKRC-02F ═══ -->
+      <!-- Sensing lines from main bus (before or after 40A MCB — after is cleaner) -->
+      <line x1="120" y1="200" x2="260" y2="200" stroke="#06b6d4" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="148" y1="200" x2="260" y2="200" stroke="#3b82f6" stroke-width="1" stroke-dasharray="3,3"/>
+      <!-- L2 sensing -->
+      <line x1="120" y1="210" x2="260" y2="210" stroke="#06b6d4" stroke-width="1" stroke-dasharray="3,3"/>
+      <!-- L3 sensing -->
+      <line x1="120" y1="220" x2="260" y2="220" stroke="#06b6d4" stroke-width="1" stroke-dasharray="3,3"/>
+
+      <!-- ENTES box -->
+      <rect x="270" y="180" width="180" height="55" rx="6" fill="#1a2230" stroke="#06b6d4" stroke-width="1.5"/>
+      <text x="280" y="200" fill="#06b6d4" font-size="10" font-weight="bold">ENTES GKRC-02F (PARALEL)</text>
+      <text x="280" y="214" fill="#8899b0" font-size="9">Gerilim Koruma Rölesi</text>
+      <text x="280" y="228" fill="#8899b0" font-size="8">Sadece gerilim algılama — güç akımı GEÇMEZ</text>
+
+      <!-- Contact output (NO) to kontaktör kumanda -->
+      <line x1="270" y1="225" x2="240" y2="225" stroke="#06b6d4" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="240" y1="225" x2="240" y2="358" stroke="#06b6d4" stroke-width="1" stroke-dasharray="3,3"/>
+      <text x="230" y="295" fill="#06b6d4" font-size="7" font-family="monospace">NO → Bobin A1</text>
+
+      <!-- PE connection from parafudr -->
+      <line x1="195" y1="120" x2="195" y2="140" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+      <!-- ═══ PE / EARTH RODS ═══ -->
+      <line x1="195" y1="480" x2="195" y2="620" stroke="#22c55e" stroke-width="2"/>
+      <!-- Triple rod icon -->
+      <line x1="155" y1="620" x2="155" y2="660" stroke="#22c55e" stroke-width="3"/>
+      <line x1="195" y1="620" x2="195" y2="660" stroke="#22c55e" stroke-width="3"/>
+      <line x1="235" y1="620" x2="235" y2="660" stroke="#22c55e" stroke-width="3"/>
+      <rect x="135" y="658" width="120" height="16" rx="4" fill="#0a2e1a" stroke="#22c55e"/>
+      <text x="148" y="670" fill="#22c55e" font-size="8" font-weight="bold">3× Q20 + BENTONİT</text>
+
+      <!-- ═══ LEGEND BOX ═══ -->
+      <rect x="500" y="70" width="370" height="290" rx="8" fill="#141a22" stroke="#2a3648" stroke-width="1"/>
+      <text x="520" y="95" fill="#e2e8f0" font-size="12" font-weight="bold">📐 Şema Açıklaması</text>
+      <line x1="520" y1="135" x2="560" y2="135" stroke="#e2e8f0" stroke-width="4"/>
+      <text x="570" y="140" fill="#86efac" font-size="10" font-weight="bold">ANA GÜÇ YOLU (SERİ) — kalın hat:</text>
+      <text x="570" y="155" fill="#8899b0" font-size="9">Şebeke → 50A MCB → 40A MCB → RCD →</text>
+      <text x="570" y="168" fill="#8899b0" font-size="9">Kontaktör → Tesla WC</text>
+      <text x="570" y="185" fill="#8899b0" font-size="9">Güç akımı sadece bu yoldan geçer.</text>
+
+      <line x1="520" y1="205" x2="560" y2="205" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="570" y="210" fill="#fca5a5" font-size="10" font-weight="bold">❶ Parafudr (PARALEL branşman):</text>
+      <text x="570" y="225" fill="#8899b0" font-size="9">Ana hattan L1-L2-L3-N alır, aşırı gerilimde</text>
+      <text x="570" y="238" fill="#8899b0" font-size="9">PE'ye boşaltır. Normalde akım geçmez.</text>
+
+      <line x1="520" y1="258" x2="560" y2="258" stroke="#06b6d4" stroke-width="1" stroke-dasharray="3,3"/>
+      <text x="570" y="263" fill="#93c5fd" font-size="10" font-weight="bold">❷ ENTES GKRC-02F (PARALEL algılama):</text>
+      <text x="570" y="278" fill="#8899b0" font-size="9">Sadece gerilim ölçer. Güç akımı geçmez.</text>
+      <text x="570" y="293" fill="#8899b0" font-size="9">NO çıkışı → kontaktör bobinini kontrol eder.</text>
+      <text x="570" y="310" fill="#8899b0" font-size="9">Gerilim anormal ise kontaktörü düşürür.</text>
+
+      <!-- F1 legend -->
+      <text x="520" y="330" fill="#e82127" font-size="9">❸ <tspan font-weight="bold">F1 Kumanda Sigortası (1P 2A C):</tspan></text>
+      <text x="570" y="345" fill="#8899b0" font-size="9">Kumanda devresini aşırı akıma karşı korur. L1</text>
+      <text x="570" y="358" fill="#8899b0" font-size="9">fazından alınan kumanda beslemesini sigortalar.</text>
+
+      <!-- PE legend -->
+      <text x="520" y="380" fill="#22c55e" font-size="9">🟢 Noktalı çizgiler = algılama/kumanda sinyali</text>
+      <text x="520" y="395" fill="#8899b0" font-size="9">🔵 Nötr (N) ayrı hat ile gösterilmiştir</text>
+      <text x="520" y="410" fill="#8899b0" font-size="9">🟢 PE tüm koruma elemanlarına dağıtılır</text>
+    </svg>
+  </div>
+
+  <div class="info">
+    <p><strong>📌 Güç Yolu (SERİ):</strong> Şebeke → Ana Pano QF1 (50A MCB) → 5×6mm² NYY → WC Panosu QF2 (40A MCB) → FI1 (Kaçak Akım 63A/30mA) → KM1 (Kontaktör) → Tesla WC</p>
+    <p><strong>📌 Hiyerarşi Notu:</strong> Ev ana panosundaki <strong>QF1 (50A)</strong> sigortası yalnızca otoparka giden 5m besleme hattını korur; lokal panodaki <strong>QF2 (40A)</strong> MCB ise Wall Connector devresinin son ve yerel koruma elemanıdır. Bir arıza durumunda önce QF2 atar — ana panoya yürümek gerekmez.</p>
+    <p><strong>📌 Paralel Branşmanlar:</strong> Parafudr (Citel) ve Gerilim Koruma (ENTES) ana hattan paralel alınır — güç akımı bu cihazların üzerinden geçmez.</p>
+    <p><strong>📌 PE Yolu:</strong> 3× Q20 topraklama çubukları → WC panosu PE barası → Tesla WC wirebox PE terminali (ÖNEMLİ: Ana panodan gelen PE damarı lokal panoda körlenmiştir — bağımsız lokal TT sistemi)</p>
+  </div>
+</section>
+
+<!-- ═══ 4 — KUMANDA ŞEMASI ═══ -->
+<section id="kumanda">
+  <h2><span class="icon">🎛️</span> Kumanda / Kontrol Şeması</h2>
+  <p>Gerilim koruma rölesi, kontaktör bobini ve kumanda sigortası bağlantıları.</p>
+
+  <div class="diagram-box">
+    <svg viewBox="0 0 750 420" xmlns="http://www.w3.org/2000/svg" style="background:#0d1117;border-radius:8px;">
+      <!-- Faz reference -->
+      <text x="30" y="30" fill="#8899b0" font-size="10" font-family="monospace">Kumanda beslemesi: L1 (kahve) — N (mavi), 230V AC</text>
+
+      <!-- 2A sigorta -->
+      <rect x="60" y="50" width="140" height="36" rx="6" fill="#1a2230" stroke="#e82127" stroke-width="1.5"/>
+      <text x="75" y="73" fill="#e2e8f0" font-size="11" font-weight="bold">F1: 1P 2A C (Siemens)</text>
+
+      <!-- Line from F1 -->
+      <line x1="130" y1="86" x2="130" y2="120" stroke="#e2e8f0" stroke-width="2"/>
+      <text x="136" y="112" fill="#e2e8f0" font-size="9" font-family="monospace">L1 (kahve)</text>
+
+      <!-- Gerilim Koruma Rölesi (kumanda çıkışı NO) -->
+      <rect x="50" y="130" width="170" height="55" rx="6" fill="#1a2230" stroke="#06b6d4" stroke-width="1.5"/>
+      <text x="65" y="152" fill="#06b6d4" font-size="11" font-weight="bold">ENTES GKRC-02F</text>
+      <text x="65" y="168" fill="#8899b0" font-size="9">Gerilim Koruma Rölesi</text>
+      <text x="65" y="180" fill="#8899b0" font-size="8">NO çıkış (aşırı/düşük gerilimde açılır)</text>
+
+      <line x1="130" y1="120" x2="130" y2="130" stroke="#e2e8f0" stroke-width="2"/>
+      <line x1="130" y1="185" x2="130" y2="220" stroke="#e2e8f0" stroke-width="2"/>
+
+      <!-- Kontaktör bobini -->
+      <rect x="50" y="228" width="170" height="55" rx="6" fill="#1a2230" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="75" y="250" fill="#f59e0b" font-size="11" font-weight="bold">Kontaktör Bobini</text>
+      <text x="65" y="266" fill="#8899b0" font-size="9">Siemens 5TT5840-0 (A1-A2)</text>
+      <text x="65" y="278" fill="#8899b0" font-size="8">230V AC bobin</text>
+
+      <line x1="130" y1="283" x2="130" y2="320" stroke="#e2e8f0" stroke-width="2"/>
+      <text x="136" y="310" fill="#3b82f6" font-size="9" font-family="monospace">N (mavi)</text>
+
+      <!-- N bar -->
+      <rect x="100" y="328" width="60" height="30" rx="4" fill="#0a1a2e" stroke="#3b82f6" stroke-width="1"/>
+      <text x="115" y="347" fill="#3b82f6" font-size="11" font-weight="bold">N Barası</text>
+
+      <line x1="130" y1="320" x2="130" y2="328" stroke="#3b82f6" stroke-width="2"/>
+
+      <!-- Legend -->
+      <rect x="420" y="70" width="280" height="200" rx="8" fill="#141a22" stroke="#2a3648" stroke-width="1"/>
+      <text x="440" y="95" fill="#e2e8f0" font-size="12" font-weight="bold">Kumanda Mantığı</text>
+      <text x="440" y="118" fill="#8899b0" font-size="10">Normal çalışma:</text>
+      <text x="440" y="135" fill="#86efac" font-size="10">✅ Gerilim normal → GKRC-02F NO kapalı</text>
+      <text x="440" y="152" fill="#86efac" font-size="10">✅ Kontaktör bobin enerjili → güç yolu açık</text>
+      <text x="440" y="175" fill="#fca5a5" font-size="10">⚠️ Aşırı/düşük gerilim → GKRC-02F açılır</text>
+      <text x="440" y="192" fill="#fca5a5" font-size="10">⚠️ Kontaktör düşer → WC beslemesi kesilir</text>
+      <text x="440" y="215" fill="#93c5fd" font-size="10">📌 Manuel acil durdurma: kumanda devresine</text>
+      <text x="440" y="232" fill="#93c5fd" font-size="10">    seri acil stop butonu eklenebilir</text>
+      <text x="440" y="255" fill="#8899b0" font-size="9">Renkler: Kahve (L1) - Mavi (N)</text>
+    </svg>
+  </div>
+
+  <div class="info">
+    <p><strong>Kumanda Devresi Çalışma Prensibi:</strong><br>
+    <strong>1.</strong> L1 fazından (RCD alt çıkış 1 nolu klemensten) 2A kumanda sigortası (F1) üzerinden gerilim koruma rölesi beslenir.<br>
+    <strong>2.</strong> ENTES GKRC-02F, L1-L2-L3 gerilimlerini sürekli izler (algılama klemensleri F1 alt çıkışından ikiz yüksükle ortak köprülenmiştir; faz sırası ve asimetri pasiftir). Gerilim normal aralıktaysa NO çıkışı kapalıdır.<br>
+    <strong>3.</strong> Kontaktör bobini (A1) üzerinden N barasına giden yol tamamlanır → bobin enerjilenir → kontaktör çeker. <strong>4 kutbun tamamı (L1, L2, L3, N) aktif kullanılır — ENTES tetiklendiğinde nötr dahil şebekeden tam izolasyon sağlanır.</strong><br>
+    <strong>4.</strong> Gerilim anormal (aşırı/düşük/faz sırası hatası) → GKRC-02F çıkışı açılır → bobin enerjisi kesilir → kontaktör düşer → WC korunur.<br>
+    <strong>5.</strong> Gerilim normale döndüğünde GKRC-02F, ayarlanan gecikme süresi (25 saniye) sonunda otomatik kapatır.</p>
+    <p style="font-size:.82rem; color:var(--text-dim); margin-top:8px;"><strong>📌 4P Kontaktör Nötr Notu:</strong> Siemens 5TT5840-0 4NO kontaktör yalnızca aktif faz hatlarını (L1, L2, L3, N) keser. Toprak hattı (PE) kontaktör kutuplarından asla geçirilmez — PE, kontaktörün yanından doğrudan geçerek PE barasına gider. 4 Kutuplu kontaktör kullanımı TT sistemde nötr hattından gelebilecek harmonik ve sızıntılara karşı <strong>premium bir lükstür</strong> — araç şarj olmuyorken (uykudayken) nötrü kökten ayırmak, aracı kırsal şebekenin tüm elektriksel gürültüsünden korur. Milyonda bir ihtimal olan nötr kontağı temassızlığı (floating neutral) riskine karşı: <strong>tüm kontaktör ve şalt vidalarını kendi üretici tork değerlerinde (Siemens/ENTES tipik 2.5–3.0 Nm) sıkın, kablo yüksüklerinin tam oturduğundan emin olun, gevşeklik bırakmayın.</strong> Yıllar sonra panodan cızırtı/ark sesi gelmediği sürece sistem sorunsuz çalışır.</p>
+  </div>
+
+  <div class="tip">
+    <p><strong>⚙️ ENTES GKRC-02F Ayar Önerileri:</strong><br>
+    • Aşırı gerilim (Over Voltage): <strong>253V</strong> (faz-nötr) — 3sn gecikme<br>
+    • Düşük gerilim (Under Voltage): <strong>207V</strong> (faz-nötr) — 3sn gecikme<br>
+    • Faz sırası koruması: <strong>KAPALI</strong> (L1-L2-L3 ortak köprülendiği için pasif)<br>
+    • Asimetri: <strong>KAPALI</strong> (L1-L2-L3 ortak köprülendiği için pasif)<br>
+    • Gecikmeli tekrar kapama (Reset/On Delay): <strong>25 saniye</strong> (Şebekenin sakinleştiğinden emin olmak için)</p>
+  </div>
+
+  <div class="warning">
+    <p><strong>⚠️ MÜHENDİSLİK NOTU — FAZ KAYBI KÖRLÜĞÜ:</strong> ENTES gerilim algılama uçları F1 sigorta çıkışından (L1) ortak köprülenmiştir. Bu konfigürasyonda aşırı/düşük gerilim L1 üzerinden kusursuz izlenirken; L2 veya L3 fazlarında yaşanabilecek olası bir faz kaybı (phase loss) ENTES tarafından algılanamaz. Bu durum müstakil şarj hattımız için bilinçli bir tasarım tercihidir — <strong>ENTES'in kör noktasını Tesla WC'nin kendi onboard voltaj/faz/frekans denetim işlemcisi kapatır.</strong> Tesla, giriş terminallerinde L2 veya L3 kaybını anında algılar, şarjı bloke eder ve 6 kırmızı flaş (aşırı gerilim/kötü şebeke kalitesi) hatası basar. Ekstra 3 kutuplu şaltere para vermeye gerek yoktur.</p>
+  </div>
+
+  <div class="warning">
+    <p><strong>⚠️ ÖNEMLİ — PARAFUDR KORUMASI:</strong> Citel DS104RS teknik föyü gereği, yukarı akış ana sigortası 50A (üretici sınırı olan ≤125A'in altında) olduğundan, parafudr önüne harici bir yedek sigorta konulmasına gerek yoktur. Parafudrun üzerindeki kontak (uzak işaret) varsa, bunu kumanda devresine seri bağlayarak parafudr arızasında kontaktörü düşürebilirsiniz.</p>
+    <p style="margin-top:8px;"><strong>⚠️ 50 CM KURALI (YILDIRIM DEŞARJI):</strong> Citel Tip I+II+III parafudrun (SPD1) anlık yıldırım deşarjını en düşük voltaj düşümüyle yapabilmesi için, bağlantı kablolarının toplam boyu (faz hattından parafudra + parafudrdan toprak barasına) <strong>kesinlikle 50 cm'yi geçmemelidir</strong>. <strong>SPD1'in PE bağlantısı toprak barasına giden en kısa ve en düz yol üzerinden yapılacaktır.</strong> Kabloya kesinlikle 'S' şeklinde bükümler veya döngüler (loops) verilmemeli, kavisli ve düz çekilmelidir.</p>
+  </div>
+</section>
+
+<!-- ═══ 5 — PANO İÇİ YERLEŞİM ═══ -->
+<section id="pano">
+  <h2><span class="icon">📦</span> Pano İçi Yerleşim</h2>
+
+  <div class="diagram-box">
+    <svg viewBox="0 0 600 520" xmlns="http://www.w3.org/2000/svg" style="background:#0d1117;border-radius:8px;">
+      <!-- Pano outline -->
+      <rect x="30" y="20" width="540" height="480" rx="10" fill="#0d1117" stroke="#2a3648" stroke-width="2" stroke-dasharray="6,3"/>
+
+      <!-- ─── 1. SIRA (ÜST) ─── -->
+      <line x1="50" y1="70" x2="550" y2="70" stroke="#f5a623" stroke-width="2"/>
+      <text x="555" y="74" fill="#f5a623" font-size="9">1. SIRA (ÜST)</text>
+
+      <!-- 1a. QF2 Lokal Şalter 40A -->
+      <rect x="55" y="38" width="100" height="30" rx="4" fill="#1a2230" stroke="#e82127" stroke-width="1.5"/>
+      <text x="68" y="57" fill="#e82127" font-size="8" font-weight="bold">4P 40A C</text>
+      <text x="72" y="68" fill="#8899b0" font-size="7">QF2 (WC MCB)</text>
+
+      <!-- 1b. SPD1 Citel Parafudr -->
+      <rect x="170" y="38" width="110" height="30" rx="4" fill="#1a2230" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="183" y="56" fill="#f59e0b" font-size="7" font-weight="bold">Citel 100kA</text>
+      <text x="190" y="68" fill="#8899b0" font-size="7">SPD1 Parafudr</text>
+
+      <!-- 1c. FI1 Kaçak Akım RCD -->
+      <rect x="295" y="38" width="130" height="30" rx="4" fill="#1a2230" stroke="#22c55e" stroke-width="1.5"/>
+      <text x="308" y="56" fill="#22c55e" font-size="7" font-weight="bold">4P 63A 30mA</text>
+      <text x="315" y="68" fill="#8899b0" font-size="7">FI1 Kaçak Akım (Tip A)</text>
+
+      <text x="60" y="90" fill="#8899b0" font-size="7">(12/15 modül dolu)</text>
+
+      <!-- ─── 2. SIRA (ORTA) ─── -->
+      <line x1="50" y1="210" x2="550" y2="210" stroke="#f5a623" stroke-width="2"/>
+      <text x="555" y="214" fill="#f5a623" font-size="9">2. SIRA (ORTA)</text>
+
+      <!-- 2a. K1 ENTES Gerilim Rölesi -->
+      <rect x="55" y="178" width="100" height="30" rx="4" fill="#1a2230" stroke="#06b6d4" stroke-width="1.5"/>
+      <text x="72" y="196" fill="#06b6d4" font-size="7" font-weight="bold">K1: ENTES</text>
+      <text x="72" y="208" fill="#8899b0" font-size="7">Gerilim Rölesi</text>
+
+      <!-- 2b. F1 Kumanda Sigortası -->
+      <rect x="170" y="178" width="60" height="30" rx="4" fill="#1a2230" stroke="#e82127" stroke-width="1.5"/>
+      <text x="180" y="198" fill="#e82127" font-size="7" font-weight="bold">F1: 1P 2A</text>
+
+      <!-- 2c. KM1 Kontaktör -->
+      <rect x="245" y="178" width="130" height="30" rx="4" fill="#1a2230" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="258" y="196" fill="#f59e0b" font-size="7" font-weight="bold">KM1: Kontaktör 4NO</text>
+      <text x="270" y="208" fill="#8899b0" font-size="7">40A Siemens 5TT5840-0</text>
+
+      <text x="60" y="230" fill="#8899b0" font-size="7">(7/15 modül dolu)</text>
+
+      <!-- ─── 3. SIRA (ALT) — BOŞ: Kablo Büküm Konfor Alanı ─── -->
+      <line x1="50" y1="340" x2="550" y2="340" stroke="#22c55e" stroke-width="2" stroke-dasharray="8,4"/>
+      <text x="555" y="344" fill="#22c55e" font-size="9">3. SIRA (ALT)</text>
+      <text x="60" y="360" fill="#22c55e" font-size="8" font-style="italic">⬇ Kablo Büküm Konfor Alanı + Rezerv ⬇</text>
+      <text x="60" y="375" fill="#8899b0" font-size="7">5×6mm² NYY + 25mm² topraklama kablosu rahat bükülür</text>
+
+      <!-- N Barası (bottom left) -->
+      <rect x="55" y="400" width="90" height="30" rx="4" fill="#0a1a2e" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="75" y="417" fill="#3b82f6" font-size="8" font-weight="bold">N Barası</text>
+      <text x="78" y="428" fill="#8899b0" font-size="6">6 delikli</text>
+
+      <!-- PE Barası (bottom next to N) -->
+      <rect x="155" y="400" width="90" height="30" rx="4" fill="#0a2e1a" stroke="#22c55e" stroke-width="1.5"/>
+      <text x="174" y="417" fill="#22c55e" font-size="8" font-weight="bold">PE Barası</text>
+      <text x="177" y="428" fill="#8899b0" font-size="6">6 delikli</text>
+
+      <!-- Bus label -->
+      <text x="55" y="460" fill="#8899b0" font-size="7">📌 N ve PE baraları 3. sıra (alt) kablo konfor bölgesinde konumlanır</text>
+
+      <!-- ─── Footnotes ─── -->
+      <ellipse cx="350" cy="480" rx="80" ry="8" fill="#1a2230" stroke="#2a3648" stroke-width="1"/>
+      <text x="310" y="484" fill="#8899b0" font-size="7">PG21 Kablo Girişleri (4×) · Pano Altı</text>
+
+      <text x="50" y="475" fill="#8899b0" font-size="7">📌 5×6mm² NYY → spiral boru → PG21 rakor → pano</text>
+      <text x="50" y="488" fill="#8899b0" font-size="7">📌 Güç köprüleri: 6mm² NYAF (kahve/siyah/gri/mavi) + yüksük</text>
+      <text x="50" y="501" fill="#8899b0" font-size="7">📌 Kumanda: 1.5mm² NYAF + yüksük</text>
+      <text x="50" y="514" fill="#8899b0" font-size="7">📌 Tüm vidalar: şalt 2.5–3.0 Nm, WC wirebox 5.6 Nm</text>
+    </svg>
+  </div>
+
+  <h3>Köprü Bağlantı Şeması</h3>
+
+  <div class="tabs" id="bridgeTabs">
+    <button class="tab-btn active" onclick="switchTab('bridgeTabs','bridgeGuc')">Güç Köprüleri (6mm²)</button>
+    <button class="tab-btn" onclick="switchTab('bridgeTabs','bridgeKumanda')">Kumanda (1.5mm²)</button>
+  </div>
+
+  <div id="bridgeGuc" class="tab-content active">
+
+    <!-- ═══ VISUAL FLOW: GÜÇ KÖPRÜLERİ ═══ -->
+    <div class="flow-pipe">
+      <div class="flow-box mcb"><span class="f-title">Ana MCB</span><span class="f-sub">2,4,6,8</span></div>
+      <span class="flow-arrow">➔</span>
+      <div class="flow-box mcb"><span class="f-title">WC MCB</span><span class="f-sub">Üst 1,3,5,7</span></div>
+      <span class="flow-arrow">➔</span>
+      <div class="flow-box rcd"><span class="f-title">Kaçak Akım</span><span class="f-sub">Üst 1,3,5,N</span></div>
+      <span class="flow-arrow">➔</span>
+      <div class="flow-box ct"><span class="f-title">Kontaktör</span><span class="f-sub">Üst 1,3,5,7</span></div>
+      <span class="flow-arrow">➔</span>
+      <div class="flow-box wc"><span class="f-title">Tesla WC</span><span class="f-sub">Wirebox Terminal</span></div>
+    </div>
+
+    <!-- Parallel branch visual -->
+    <div class="flow-branch">
+      <span class="flow-branch-label">⬆ PARALEL BRANŞMAN</span>
+      <span class="flow-arrow">WC MCB Üst (1,3,5,7) — ikiz yüksük ➔</span>
+      <div class="flow-box parafudr" style="min-width:110px;"><span class="f-title">Citel Parafudr</span><span class="f-sub">L1-L2-L3-N → PE</span></div>
+      <span style="font-size:.7rem; color:var(--text-dim);">(güç akımı geçmez)</span>
+    </div>
+
+    <!-- ═══ TEXT MATRIX ═══ -->
+    <div class="term-block">
+      <div class="term-row"><span class="term-label">Ana MCB Çıkış</span><span class="term-value">(2,4,6,8) L1-L2-L3-N ➔ WC MCB Üst Giriş (1,3,5,7)</span></div>
+      <div class="term-row"><span class="term-label">WC MCB Çıkış</span><span class="term-value">(2,4,6,8) L1-L2-L3-N ➔ Kaçak Akım Üst Giriş (1,3,5,N)</span></div>
+      <div class="term-row"><span class="term-label">Kaçak Akım Çıkış</span><span class="term-value">(2,4,6,N) L1-L2-L3-N ➔ Kontaktör Üst Giriş (1,3,5,7)</span></div>
+      <div class="term-row"><span class="term-label">Kontaktör Çıkış</span><span class="term-value">(2,4,6,8) L1-L2-L3-N ➔ Tesla WC Wirebox Terminal Bloğu</span></div>
+    </div>
+
+    <p style="font-size:.85rem; color:var(--text-dim); margin-top:10px;"><strong>Paralel Branşman — Citel Parafudr:</strong> WC MCB üst giriş (1,3,5,7) terminallerinden <strong>ikiz yüksük</strong> ile L1-L2-L3-N sinyalleri paralel alınarak Citel Parafudr girişine gider. Parafudr çıkışı PE barasına bağlanır. Güç akımı parafudrun üzerinden GEÇMEZ.</p>
+    <p style="font-size:.85rem; color:var(--text-dim);">Tüm 6mm² NYAF uçlarına uygun izoleli yüksük sıkılmalıdır. Siemens terminalleri <strong>üretici katalog tork değerinde (tipik 2.5–3.0 Nm)</strong> sıkılır. <strong>⚠️ 5.6 Nm yalnızca Tesla WC wirebox terminal bloğu içindir.</strong></p>
+  </div>
+
+  <div id="bridgeKumanda" class="tab-content">
+
+    <!-- ═══ VISUAL FLOW: KUMANDA SİNYAL YOLU ═══ -->
+    <div class="flow-pipe">
+      <div class="flow-box rcd" style="min-width:80px;"><span class="f-title">Kaçak Akım</span><span class="f-sub">Alt Çıkış 1 (L1)</span></div>
+      <span class="flow-arrow">➔</span>
+      <div class="flow-box fuse"><span class="f-title">F1 Sigorta</span><span class="f-sub">2A</span></div>
+      <span class="flow-arrow">➔</span>
+      <div class="flow-box entes"><span class="f-title">ENTES</span><span class="f-sub">Ortak: 1</span></div>
+      <span class="flow-arrow">➔</span>
+      <div class="flow-box entes" style="border-style:dashed;"><span class="f-title">(İç Röle)</span><span class="f-sub">NO kontak</span></div>
+      <span class="flow-arrow">➔</span>
+      <div class="flow-box entes"><span class="f-title">ENTES NO</span><span class="f-sub">Çıkış: 3</span></div>
+      <span class="flow-arrow">➔</span>
+      <div class="flow-box ct" style="min-width:80px;"><span class="f-title">Kontaktör</span><span class="f-sub">A1 (bobin)</span></div>
+      <span class="flow-arrow">➔</span>
+      <div class="flow-box ct" style="min-width:80px;"><span class="f-title">Kontaktör</span><span class="f-sub">A2</span></div>
+      <span class="flow-arrow">➔</span>
+      <div class="flow-box" style="border-color:var(--blue); min-width:70px;"><span class="f-title">N Barası</span><span class="f-sub">Pano</span></div>
+    </div>
+
+    <!-- ENTES ölçüm hatları info -->
+    <div class="flow-info">
+      <strong>📐 ENTES Ölçüm Hatları (Ortak Köprü — F1 Korumalı):</strong><br>
+      <span class="flow-pipe" style="justify-content:flex-start; margin:4px 0 0 0;">
+        <span style="font-size:.75rem; color:var(--text-dim);">F1 (2A) Alt Çıkış (L1)</span>
+        <span class="flow-arrow" style="font-size:.9rem;">➔</span>
+        <span style="font-size:.75rem; color:var(--cyan);">ikiz yüksük</span>
+        <span class="flow-arrow" style="font-size:.9rem;">➔</span>
+        <span style="font-size:.75rem; color:var(--text-dim);">ENTES L1-L2-L3 (ortak köprü)</span>
+      </span>
+      <span style="font-size:.72rem; color:var(--text-dim); display:block; margin-top:2px;">Bu hatlardan güç akımı geçmez — sadece gerilim ölçümü içindir.</span>
+    </div>
+
+    <!-- ENTES gözlem hatları sigorta önerisi (Sıfır Maliyet) -->
+    <div class="flow-info" style="border-left-color:var(--red);">
+      <strong>🔧 Mühendislik Notu (Sıfır Masraf, Maksimum Güvenlik):</strong> ENTES GKRC-02F rölesinin gerilim algılama klemensleri (L1, L2, L3) güç çekmeyen, sadece voltaj dinleyen yüksek empedanslı girişlerdir. Pano içi ince kabloların yangın riskine karşı, RCD alt çıkışından (L1) beslenen mevcut <strong>F1 (2A) kumanda sigortasının alt çıkışından ikiz yüksükle paralel hat alınarak ENTES'in L1, L2 ve L3 algılama klemensleri ortak köprülenmiştir</strong>. Böylece ekstra 3 kutuplu şalter maliyetine girilmeden tüm ince kablolar 2A sigorta zırhı altına alınmış; faz sırası ve asimetri koruması devre dışı bırakılarak şarj panosuna özel premium sadeleşme ve tam kısa devre koruması sağlanmıştır.
+    </div>
+
+    <!-- ═══ TEXT MATRIX ═══ -->
+    <div class="term-block">
+      <div class="term-row"><span class="term-label">Faz Girişi</span><span class="term-value">Kaçak Akım Alt Çıkış 1 Nolu Klemens (L1) ➔ F1 (2A) Üst Giriş</span></div>
+      <div class="term-row"><span class="term-label">F1 Çıkışı</span><span class="term-value">F1 (2A) Alt Çıkış ➔ ENTES GKRC-02F 1 Nolu Klemens (Ortak/Common Uç)</span></div>
+      <div class="term-row"><span class="term-label">ENTES NO Çıkışı</span><span class="term-value">ENTES GKRC-02F 3 Nolu Klemens (NO) ➔ Siemens Kontaktör A1 Terminali (Bobin Girişi)</span></div>
+      <div class="term-row"><span class="term-label">Kontaktör Nötr</span><span class="term-value">Siemens Kontaktör A2 Terminali ➔ Pano Nötr (N) Barası</span></div>
+      <div class="term-row"><span class="term-label">ENTES N Referans</span><span class="term-value">ENTES GKRC-02F N Girişi ➔ Pano Nötr (N) Barası</span></div>
+      <div class="term-row"><span class="term-label">ENTES Ölçüm</span><span class="term-value">ENTES L1-L2-L3 gerilim algılama klemensleri, F1 (2A) alt çıkışından ikiz yüksükle paralel hat alınarak ortak köprülenmiştir. N referansı RCD alt çıkış N barasından alınır.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 6 — FİZİKSEL YERLEŞİM / DİKEY KULE ═══ -->
+<section id="fiziksel">
+  <h2><span class="icon">📐</span> Fiziksel Yerleşim — Dikey Kule Düzeni</h2>
+  <p>Tüm kurulum <strong>sıva üstü, beton duvar</strong> üzerine yapılacaktır. Estetik ve ergonomik bir "Dikey Kule" düzeni ile Tesla WC altta, metal pano üstte konumlanır. Tüm ölçüler bitmiş zemin seviyesinden yukarı doğru alınmıştır.</p>
+
+  <div class="diagram-box">
+    <svg viewBox="0 0 400 520" xmlns="http://www.w3.org/2000/svg" style="background:#0d1117;border-radius:8px;">
+      <defs>
+        <linearGradient id="g1f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e82127"/><stop offset="1" stop-color="#f5a623"/></linearGradient>
+      </defs>
+      <!-- Zemin çizgisi -->
+      <line x1="50" y1="500" x2="350" y2="500" stroke="#555" stroke-width="2"/>
+      <text x="30" y="504" fill="#555" font-size="9">Zemin ±0</text>
+
+      <!-- Sol tarafta dikey yükseklik skalası -->
+      <line x1="60" y1="500" x2="60" y2="80" stroke="#2a3648" stroke-width="1" stroke-dasharray="4,4"/>
+
+      <!-- 100 cm işareti (WC alt) -->
+      <line x1="56" y1="423" x2="64" y2="423" stroke="#2a3648" stroke-width="1"/>
+      <text x="70" y="427" fill="#8899b0" font-size="8">100 cm — WC alt hizası</text>
+
+      <!-- 135 cm işareti (WC üst = 100+35) -->
+      <line x1="56" y1="330" x2="64" y2="330" stroke="#2a3648" stroke-width="1"/>
+      <text x="70" y="334" fill="#8899b0" font-size="8">135 cm — WC üst hizası</text>
+
+      <!-- 150 cm işareti (pano alt) -->
+      <line x1="56" y1="270" x2="64" y2="270" stroke="#f5a623" stroke-width="1"/>
+      <text x="70" y="274" fill="#f5a623" font-size="8" font-weight="bold">150 cm — Pano alt hizası</text>
+
+      <!-- 210 cm işareti (pano üst) -->
+      <line x1="56" y1="110" x2="64" y2="110" stroke="#f5a623" stroke-width="1"/>
+      <text x="70" y="114" fill="#f5a623" font-size="8" font-weight="bold">210 cm — Pano üst bitişi</text>
+
+      <!-- Tesla WC gövdesi (100 cm - 135 cm) -->
+      <rect x="150" y="330" width="120" height="93" rx="8" fill="url(#g1f)" opacity=".9"/>
+      <text x="162" y="370" fill="#000" font-size="10" font-weight="900">TESLA WC</text>
+      <text x="168" y="384" fill="#000" font-size="7">100 - 135 cm</text>
+      <text x="155" y="400" fill="#000" font-size="6">Gövde: 34.5 cm</text>
+
+      <!-- WC wirebox (gözükmez — ana ünitenin ARKASINDA, 250mm yükseklik) -->
+      <rect x="148" y="330" width="124" height="65" rx="3" fill="none" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="155" y="355" fill="#555" font-size="5">Wirebox (arkada, 250mm)</text>
+      <text x="155" y="365" fill="#555" font-size="5">2× dübel ile sabitlenir</text>
+
+      <!-- 15 cm boşluk -->
+      <rect x="150" y="285" width="120" height="45" rx="4" fill="none" stroke="#06b6d4" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="155" y="308" fill="#06b6d4" font-size="7">15 cm boşluk</text>
+
+      <!-- Spiral boru (0.5m parça) -->
+      <line x1="250" y1="310" x2="280" y2="290" stroke="#555" stroke-width="2"/>
+      <text x="260" y="325" fill="#555" font-size="6">∅ 0.5m spiral</text>
+
+      <!-- Metal Pano (150 cm - 210 cm) -->
+      <rect x="140" y="110" width="140" height="160" rx="6" fill="#141a22" stroke="#e82127" stroke-width="1.5"/>
+      <text x="175" y="150" fill="#e2e8f0" font-size="8" font-weight="bold">Çetinkaya</text>
+      <text x="166" y="162" fill="#e2e8f0" font-size="8" font-weight="bold">CP 5107</text>
+      <text x="160" y="180" fill="#8899b0" font-size="7">3 Sıra × 15 Modül</text>
+      <text x="160" y="200" fill="#8899b0" font-size="7">35×50×19.5 cm</text>
+      <text x="155" y="215" fill="#8899b0" font-size="7">150-200 cm arası</text>
+      <text x="160" y="235" fill="#06b6d4" font-size="7">ENTES ekranı ≈ 185 cm</text>
+      <text x="160" y="250" fill="#06b6d4" font-size="7">Şalt malzeme ≈ 185-195 cm</text>
+      <text x="160" y="265" fill="#8899b0" font-size="7">(tam el/göz hizası)</text>
+
+      <!-- 5m spiral boru (sol) -->
+      <line x1="120" y1="430" x2="80" y2="230" stroke="#555" stroke-width="3"/>
+      <text x="50" y="320" fill="#555" font-size="7">∅ 5m spiral</text>
+      <text x="50" y="332" fill="#555" font-size="6">(ana besleme)</text>
+
+      <!-- 4.5m spiral boru (sağ) -->
+      <line x1="310" y1="430" x2="330" y2="230" stroke="#22c55e" stroke-width="2"/>
+      <text x="290" y="320" fill="#22c55e" font-size="7">∅ 4.5m spiral</text>
+      <text x="290" y="332" fill="#22c55e" font-size="6">(topraklama koruma)</text>
+
+      <!-- Göz hizası vurgusu (185-195 cm) -->
+      <rect x="130" y="142" width="10" height="20" rx="2" fill="#f5a623" opacity=".4"/>
+      <text x="95" y="157" fill="#f5a623" font-size="7">👁 Göz hizası</text>
+    </svg>
+  </div>
+
+  <h3>Dikey Kot Haritası (Zeminden Yukarı)</h3>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <strong>Zemin Referansı (0 cm):</strong> Tüm ölçüler bitmiş zemin seviyesinden başlar. Duvar tipi: <strong>Beton</strong> — tüm delme işlemleri <strong>Darbeli Matkap (Hilti)</strong> ve elmas uç ile yapılacaktır.
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <strong>Tesla WC Ünitesi (100 cm — 135 cm):</strong> WC'nin alt hizası zeminden <strong>100 cm</strong> yükseklikte olacak şekilde sabitlenir (gövde boyu 34.5 cm, üst hiza 135 cm). Şarj kablosu alt kıvrımı yerden kurtulur, kullanım ergonomisi sağlanır. Wirebox, WC ana ünitesinin arkasında kalacak şekilde (görünmez), kutuyla birlikte gelen <strong>karton montaj şablonu</strong> kullanılarak işaretlenir ve <strong>6mm beton dübel (2 adet)</strong> ile betona tespit edilir.
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <strong>Ara Geçiş Koridoru (135 cm — 150 cm):</strong> Tesla WC üst bitişi (135 cm) ile metal pano alt başlangıcı (150 cm) arasında <strong>15 cm temiz boşluk</strong> bırakılır. Bu boşluktan geçen kablolar <strong>0.5 m'lik çelik spiral boru</strong> ile zırhlanır. Rakor PG21 ile her iki uç sonlandırılır.
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <strong>Metal Pano (150 cm — 200 cm):</strong> Panonun alt tabanı zeminden <strong>150 cm</strong> yukarıdadır. Pano yüksekliği 50 cm olduğundan tavanı <strong>200 cm</strong> seviyesine denk gelir. ENTES GKRC-02F ekranı ve tüm şalt malzemeler <strong>185 cm — 195 cm</strong> aralığına (tam el ve göz hizasına) yerleşir. Pano 8mm/10mm çelik dübel ile betona tespit edilir.
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <strong>Boru ve Kablo Sabitleme:</strong> Tüm spiral borular ve kablolar <strong>Beton Çivili Çelik Kroşe</strong> kullanılarak beton duvara sabitlenir. Plastik kroşe kullanılmaz — çelik kroşe hem mekanik dayanım hem de uzun ömür sağlar.
+    </div>
+  </div>
+
+  <div class="info">
+    <p><strong>📏 Özet Kot Tablosu:</strong></p>
+    <div class="term-block">
+      <div class="term-row"><span class="term-label">0 cm</span><span class="term-value">Bitmiş zemin</span></div>
+      <div class="term-row"><span class="term-label">100 cm</span><span class="term-value">Tesla WC alt hizası (montaj başlangıcı)</span></div>
+      <div class="term-row"><span class="term-label">135 cm</span><span class="term-value">Tesla WC üst bitişi (gövde 34.5 cm)</span></div>
+      <div class="term-row"><span class="term-label">135-150 cm</span><span class="term-value">15 cm ara geçiş bölgesi (spiral borulu)</span></div>
+      <div class="term-row"><span class="term-label">150 cm</span><span class="term-value">Pano alt başlangıcı</span></div>
+      <div class="term-row"><span class="term-label">185-195 cm</span><span class="term-value">Şalt malzeme + ENTES ekranı (el/göz hizası)</span></div>
+      <div class="term-row"><span class="term-label">210 cm</span><span class="term-value">Pano üst bitiş çizgisi</span></div>
+    </div>
+  </div>
+
+  <div class="warning">
+    <p><strong>⚠️ BETON MONTAJ UYARISI:</strong> Çiftlik ortamında duvarlar <strong>beton</strong> olup sıva üstü montaj yapılacaktır. Standart darbesiz matkap yeterli değildir — <strong>Darbeli Matkap (Hilti) ve Elmas Uç</strong> kullanılmalıdır. Pvc dübel yerine <strong>8mm veya 10mm Ağır Hizmet Roket/Çelik Dübel</strong> tercih edilmelidir. Tüm kablo ve boru sabitlemelerinde <strong>Beton Çivili Çelik Kroşe</strong> kullanılmalı, plastik kroşelerden kaçınılmalıdır.</p>
+  </div>
+</section>
+
+<!-- ═══ 7 — MONTAJ ═══ -->
+<section id="montaj">
+  <h2><span class="icon">🔧</span> Adım Adım Montaj</h2>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <strong>Güvenlik — Şalteri Kapat</strong>
+      <p>Ana pano şalterini kapatın. Gerilim yokladığınızdan EMİN olun (multimetre ile L-N, L-PE, N-PE arası ölçüm).</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <strong>Kabloyu Çek</strong>
+      <p>Ana panodan WC panosuna 5×6mm² NYY kabloyu <strong>5 metrelik çelik spiral boru</strong> içinde çekin. Boruyu kemirgen ve fiziksel darbeye karşı koruma amaçlı <strong>Beton Çivili Çelik Kroşe</strong> ile duvara sabitleyin. PG21 rakorlarla her iki ucu sonlandırın. Duvar beton olduğu için delme işlemini <strong>Darbeli Matkap (Hilti) ve Elmas Uç</strong> ile yapın.</p>
+      <div class="tip" style="margin:8px 0;">
+        <p><strong>🎨 FAZ RENK KODLARI (IEC Standardı):</strong></p>
+        <div class="term-block">
+          <div class="term-row"><span class="term-label">L1</span><span class="term-value"><span class="wire"><span class="wire-dot" style="background:#8B4513"></span> Kahverengi</span></span></div>
+          <div class="term-row"><span class="term-label">L2</span><span class="term-value"><span class="wire"><span class="wire-dot" style="background:#222"></span> Siyah</span></span></div>
+          <div class="term-row"><span class="term-label">L3</span><span class="term-value"><span class="wire"><span class="wire-dot" style="background:#555"></span> Gri</span></span></div>
+          <div class="term-row"><span class="term-label">N</span><span class="term-value"><span class="wire"><span class="wire-dot" style="background:#3b82f6"></span> Mavi</span></span></div>
+          <div class="term-row"><span class="term-label">PE</span><span class="term-value"><span class="wire"><span class="wire-dot" style="background:#22c55e"></span> Sarı / Yeşil</span></span></div>
+        </div>
+      </div>
+      <p style="font-size:.85rem; color:var(--text-dim);">Renk kodu: <span class="wire"><span class="wire-dot" style="background:#8B4513"></span> Kahve (L1)</span> · <span class="wire"><span class="wire-dot" style="background:#222"></span> Siyah (L2)</span> · <span class="wire"><span class="wire-dot" style="background:#555"></span> Gri (L3)</span> · <span class="wire"><span class="wire-dot" style="background:#3b82f6"></span> Mavi (N)</span> · <span class="wire"><span class="wire-dot" style="background:#22c55e"></span> Sarı/Yeşil (PE)</span></p>
+      <div class="tip" style="margin:8px 0;">
+        <p><strong>🔧 10m Spiral Boru Metraj Kırılımı:</strong> 10 metrelik boruyu israf etmeden tam 3 parçaya bölün:
+        • <strong>5.0 metre</strong> — Ana ev panosundan WC panosuna gelen NYY besleme hattının tam koruması için.
+        • <strong>0.5 metre (50 cm)</strong> — Üstteki pano ile alttaki Tesla WC arasındaki 15 cm'lik dikey ara geçiş kablolarını zırhlamak için.
+        • <strong>~4.5 metre (kalan)</strong> — Dışarıdaki topraklama çukurlarından gelip panoya çıkan 25mm² çıplak örgülü bakır kablonun, beton/toprak geçişindeki mekanik darbelerden ve ot biçme motoru/kürek risklerinden korunması için.</p>
+      </div>
+
+      <div class="warning" style="margin:8px 0;">
+        <p><strong>⚠️ BLACKOUT ENGELLEME — ANA PANO BAĞLANTI NOKTASI:</strong> Ana panodan çekilecek 5×6mm² NYY hat, ana panodaki mevcut ana kaçak akım rölesinin (30mA veya 300mA) çıkışına KESİNLİKLE bağlanmamalıdır. Bağlanırsa, araç şarj olurken yaşanacak en ufak DC sızıntıda veya parafudrun anlık tepkilerinde tesisteki tüm yüklerin (kameralar, aydınlatma vb.) elektriği kesilir.</p>
+        <p style="margin-top:6px;"><strong>NOT — SELEKTİVİTE & KABLO GÜVENLİĞİ:</strong> Ana panodaki 50A sigorta hattın kısa devre korumasını sağlarken, otopark panosundaki 40A sigorta yerel şalter vazifesi görür. 6mm² NYY kablonun boru içindeki akım taşıma kapasitesi sınırda olduğundan, 50A sigorta kabloyu aşırı yük (overload) bölgesinde tam koruyamaz, ancak kısa devrelere karşı milisaniyede tam koruma sağlar. <strong>Sahada aşırı yük olasılığı son derece düşüktür:</strong> Hat sadece Tesla WC'ye ait müstakil bir otobandır. Aracın OBC'si donanımsal olarak trifazede 16A'e kilitlidir ve hatta başka hiçbir yük bağlanmaz. Hat ya 16A çekecek ya da kısa devrede sigorta anında kesecektir — kablonun erime senaryosu pratik olarak mümkün değildir.</p>
+        <p style="margin-top:4px; font-size:.82rem;"><strong>🔧 C ve C Eğrisi Selektivite Şerhi:</strong> 50A (C eğrisi) ve 40A (C eğrisi) kesiciler arasında tam selektivite yüksek kısa devre akımlarında garanti edilemeyebilir. Arıza durumunda her iki sigortanın da aynı anda açabileceği sahada bilinmelidir. <strong>Bu bir güvenlik riski değil, sadece konfor meselesidir</strong> — en kötü senaryoda şarj durur, ana panoya yürüyüp şalteri geri kaldırırsınız. Sisteme veya araca zerre zararı yoktur. Dağıtım şirketi (DSO) mühürlü alanlarına müdahale edilmeden ana sayaç çıkış barasından hat alınmalıdır.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <strong>WC Panosunu Beton Duvar'a Monte Et</strong>
+      <p>Çetinkaya CP 5107 ABS Dağıtım Panosu (Opak Kapaklı, IP65, 3 Sıra x 15 Modül) panoyu <strong>Darbeli Matkap (Hilti) ve Elmas Uç</strong> ile betona delik açarak, <strong>8mm veya 10mm Ağır Hizmet Roket/Çelik Dübel</strong> kullanarak sabitleyin. PG21 rakorları pano altından takın.</p>
+      <p><strong>Pano içi sıra kullanımı:</strong> Panoda toplam <strong>3 sıra (her biri 15 modüllü DIN ray)</strong> bulunur. <strong>1. SIRA (ÜST):</strong> QF2 Lokal Şalter (4P) + SPD1 Parafudr (4P) + FI1 Kaçak Akım Rölesi (4P) yan yana dizilecektir (15 modüllük sırada 12 modül doludur). <strong>2. SIRA (ORTA):</strong> K1 ENTES Rölesi (3P) + F1 Kumanda Sigortası (1P) + KM1 Güç Kontaktörü (3P) yan yana dizilecektir (15 modüllük sırada 7 modül doludur). <strong>3. SIRA (ALT):</strong> Tamamen BOŞ bırakılacaktır. Bu sıra, aşağıdan giren 5×6mm² NYY kablonun ve 25mm² topraklama kablosunun rahatça bükülmesi, pano içi kablo yönetimi ile Nötr ve PE baralarının nizamı için "Kablo Büküm Konfor Alanı" ve gelecekteki genişlemeler için rezerv alan olarak kullanılacaktır.</p>
+      <p style="font-size:.85rem; color:var(--text-dim); margin-top:6px;"><strong>⚠️ 50 cm Kuralı (Parafudr):</strong> Citel Tip I+II+III parafudrun bağlantı kablolarının toplam boyu (faz hattından parafudra + parafudrdan PE barasına) <strong>50 cm'yi geçmemelidir</strong>. Kablolara keskin 90° büküm yapılmamalı, kavisli çekilmelidir.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <strong>Güç Köprülerini Yap</strong>
+      <p>6mm² NYAF kabloları uygun boyda kesin, uçlarına izoleli yüksük sıkın. Şemadaki sırayla köprüleri tamamlayın. Tüm vidaları <strong>üretici katalog torkunda</strong> (Siemens/ENTES tipik 2.5–3.0 Nm) sıkın. Zayıf temas yangın riskidir! <strong>⚠️ 5.6 Nm yalnızca Tesla WC wirebox terminalleri içindir.</strong></p>
+      <p style="font-size:.85rem; color:var(--text-dim);">📌 <strong>Kablo bağları (#25):</strong> Köprü kablolarını demet halinde toplayıp pano içindeki kablo bağlarıyla sabitleyin. Böylece kablolar düzgün sıralanır, hareket etmez ve terminallere kuvvet uygulamaz.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <strong>Kumanda Devresini Kur</strong>
+      <p>1.5mm² NYAF ile: F1 (2A) → GKRC-02F → Kontaktör A1-A2 bağlantılarını yapın. N barasına dönüşü unutmayın.</p>
+      <p style="font-size:.85rem; color:var(--text-dim);">📌 <strong>Kablo bağları (#25):</strong> Kumanda kablolarını da güç kablolarından ayrı bir demet halinde toplayıp kablo bağlarıyla sabitleyin. Böylece karışıklık önlenir ve bakımda kolayca takip edilebilir.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <strong>Topraklama Sistemini Kur</strong>
+      <p>3× Q20 çubukları en az 3m aralıkla üçgen şeklinde toprağa çakın. Bentonit karışımını çukurlara dökün. 25mm² örgülü kabloyu çubuklara kelepçelerle bağlayın. Tüm çubukları birbirine paralel bağlayıp WC panosu PE barasına getirin.</p>
+      <div class="warning" style="margin:8px 0;">
+        <p><strong>⚠️ KRİTİK — BAĞIMSIZ LOKAL TT SİSTEMİ:</strong> Bu sistem, Wall Connector beslemesi için bağımsız lokal TT sistemi olarak tasarlanmıştır. Ana panodan gelen 5×6mm² NYY kablonun içindeki sarı-yeşil (PE) toprak damarı lokal otopark panosunda <strong>hiçbir yere bağlanmayacak</strong>, ucu kesilip izole bantla körlenecektir. Lokal koruma topraklaması yalnızca bu sisteme ait topraklama elektrodu (3 adet Q20 bakır çubuk + bentonit) üzerinden sağlanır. Ana panodan gelen PE iletkeni bu lokal TT sistemine dahil edilmez. Bu tasarımın amacı, koruma topraklamasını lokal referansa dayandırmak ve farklı topraklama sistemleri arasında koruma iletkeni üzerinden potansiyel taşınmasını (exported potential) önlemektir.</p>
+      </div>
+      <p><strong>PE hattı kesinlikle Kaçak Akım Rölesinden (RCD) veya Kontaktörden geçirilmez; hiçbir kesiciye uğramadan doğrudan ve kesintisiz olarak Tesla WC wirebox terminaline ulaşır.</strong> Kalan ~4.5m çelik spiral boruyu 25mm² topraklama kablosunun beton/toprak geçişindeki mekanik darbelerden, ot biçme motoru ve kürek risklerinden koruması için kullanın. Test klemensi ekleyin. Topraklama direncini ölçün (&lt;10Ω hedef).</p>
+      <p style="font-size:.85rem; color:var(--text-dim);">📌 <strong>Korozyon koruması — Bakır Gresi:</strong> Topraklama çubukları ile 25mm² kablonun birleştiği kelepçeler torklandıktan sonra, galvanik korozyonu önlemek amacıyla bağlantı noktaları <strong>bakır gresi</strong> ile korunacaktır. Topraklama test klemensi, periyodik gözle kontrole imkan tanıyacak şekilde toprak üstü buat/bağlantı kutusu içinde muhafaza edilecektir. Isı shrink sadece kablo ucundaki örgülü iletkenin kelepçeye girdiği noktada kullanılır.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">7</div>
+    <div class="step-body">
+      <strong>NYY Kabloyu WC Wirebox'a Bağla</strong>
+      <p>WC panosu kontaktör çıkışından gelen L1,L2,L3,N,PE kablolarını Tesla WC wirebox terminal bloğuna bağlayın. Tüm iletkenler <strong>~12 mm soyulur</strong>, terminaller <strong>5.6 Nm</strong> torkla sıkılır. <strong>Kablolar wirebox'ın sol tarafındaki servis halkasına (service loop) zip tie ile sabitlenmelidir</strong> — fazla zip tie ucu makasla kesilir.</p>
+      <div class="info" style="margin:6px 0;">
+        <p><strong>📐 Kablo Giriş Yönüne Göre Kesim Boyları:</strong> Tesla kılavuzuna göre üstten kablo girişi ile alttan/arkadan kablo girişi için iletkenlerin kesim boyları <strong>farklıdır</strong>. Üstten girişte N ve PE iletkenleri daha uzun bırakılır; alttan girişte ise L1-L2-L3 daha uzundur. Kabloları <strong>önce wirebox içine sokup sonra boylandırarak kesin</strong> — şablona göre ölçmeyin: "Pull excess wire first, then cut to length."</p>
+      </div>
+      <div class="term-block">
+        <div class="term-row"><span class="term-label">Terminal N</span><span class="term-value">N (mavi) — en soldaki klemenstir (7 numara)</span></div>
+        <div class="term-row"><span class="term-label">Terminal L1</span><span class="term-value">L1 (kahve) — N'nin sağındadır (8 numara)</span></div>
+        <div class="term-row"><span class="term-label">Terminal L2</span><span class="term-value">L2 (siyah) — L1'in sağındadır (9 numara)</span></div>
+        <div class="term-row"><span class="term-label">Terminal L3</span><span class="term-value">L3 (gri) — L2'nin sağındadır (10 numara)</span></div>
+        <div class="term-row"><span class="term-label">Terminal PE</span><span class="term-value">PE (sarı/yeşil) — en sağdaki klemenstir (11 numara)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">8</div>
+    <div class="step-body">
+      <strong>WC Ana Üniteyi Tak</strong>
+      <p>Wirebox'a ana üniteyi oturtun, 4 adet 4.0×50mm vida ile sabitleyin. Kabloların terminal blok vidalarının üzerinden geçmediğinden emin olun.</p>
+      <div class="warning" style="margin:8px 0;">
+        <p><strong>🔧 PERİYODİK TORK BAKIMI — 1. AY KONTROLÜ:</strong> Bakır iletkenlerin zamanla oturma (settling) eğilimi nedeniyle, <strong>ilk enerji verilip sistem 1 ay çalıştırıldıktan sonra</strong> tüm güç terminalleri kontrol edilmelidir: <strong>Wirebox vidaları 5.6 Nm, QF2/FI1/KM1 gibi şalt cihazları üretici katalog torkunda (tipik 2.5–3.0 Nm)</strong> yeniden sıkılmalıdır. Bu işlem, uzun vadeli temas direnci artışını ve termal runaway riskini sıfırlar.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">9</div>
+    <div class="step-body">
+      <strong>Enerji Ver ve Test Et</strong>
+      <p>Önce kumanda devresini test edin: 2A sigortayı takın, gerilim rölesi çalışıyor mu? Kontaktör çekiyor mu? Sonra sırayla: WC MCB → Kaçak Akım → Ana MCB açın. WC faceplate'de startup LED testi görmelisiniz (7 LED tam yanar, sonra sarı/soluk yanar — komisyonlama bekliyor).</p>
+      <div class="warning" style="margin:8px 0;">
+        <p><strong>⚠️ TESLA UYARISI — N BAĞLANTISINI KONTROL ET (ENERJİ VERMEDEN ÖNCE):</strong> Tesla kılavuzu sayfa 8: <strong>"Double check N connection is 230 V L to N at terminals of wirebox before energizing. Mis-wiring the neutral terminal with &gt;264V to PE can damage Wall Connector."</strong> Enerji vermeden önce multimetre ile wirebox terminallerinde L1-N ve L2-N ve L3-N arası <strong>230V AC</strong> olduğunu mutlaka doğrulayın. Yanlış N bağlantısı cihaza kalıcı hasar verir.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">10</div>
+    <div class="step-body">
+      <strong>ENTES GKRC-02F Ayarları</strong>
+      <p>Aşağıdaki değerleri programa girin (cihaz menüsünden):</p>
+      <div class="term-block">
+        <div class="term-row"><span class="term-label">OV (Aşırı G)</span><span class="term-value">253V / 3sn</span></div>
+        <div class="term-row"><span class="term-label">UV (Düşük G)</span><span class="term-value">207V / 3sn</span></div>
+        <div class="term-row"><span class="term-label">Faz Sırası</span><span class="term-value">KAPALI (L1-L2-L3 ortak köprülü)</span></div>
+        <div class="term-row"><span class="term-label">Asimetri</span><span class="term-value">KAPALI (L1-L2-L3 ortak köprülü)</span></div>
+        <div class="term-row"><span class="term-label">Gecikmeli Tekrar</span><span class="term-value">25sn (Reset/On Delay)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">11</div>
+    <div class="step-body">
+      <strong>Uyarı Etiketini Yapıştır (#24)</strong>
+      <p>Montaj tamamen bittiğinde, <strong>metal panonun dış kapağına görünür bir şekilde</strong> uyarı etiketini yapıştırın. Etiket, bakım ve müdahale sırasında yetkisiz kişileri uyarır ve acil durumda doğru müdahaleyi sağlar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 8 — TOPRAKLAMA ═══ -->
+<section id="topraklama">
+  <h2><span class="icon">⛰️</span> Topraklama Sistemi</h2>
+
+  <div class="diagram-box">
+    <svg viewBox="0 0 650 310" xmlns="http://www.w3.org/2000/svg" style="background:#0d1117;border-radius:8px;">
+      <!-- Triangle of rods -->
+      <polygon points="325,30 175,230 475,230" fill="none" stroke="#22c55e" stroke-width="2" stroke-dasharray="8,4"/>
+      <text x="305" y="25" fill="#8899b0" font-size="9">≥3m</text>
+      <text x="130" y="145" fill="#8899b0" font-size="9">≥3m</text>
+      <text x="400" y="145" fill="#8899b0" font-size="9">≥3m</text>
+
+      <!-- Rod 1 -->
+      <rect x="315" y="30" width="20" height="60" rx="3" fill="#a0a0a0" stroke="#22c55e" stroke-width="1.5"/>
+      <text x="340" y="70" fill="#22c55e" font-size="9" font-weight="bold">Q20×1.5m</text>
+
+      <!-- Rod 2 -->
+      <rect x="165" y="140" width="20" height="80" rx="3" fill="#a0a0a0" stroke="#22c55e" stroke-width="1.5"/>
+      <text x="130" y="210" fill="#22c55e" font-size="9" font-weight="bold">Q20×1.5m</text>
+
+      <!-- Rod 3 -->
+      <rect x="465" y="140" width="20" height="80" rx="3" fill="#a0a0a0" stroke="#22c55e" stroke-width="1.5"/>
+      <text x="490" y="210" fill="#22c55e" font-size="9" font-weight="bold">Q20×1.5m</text>
+
+      <!-- Earth cable -->
+      <line x1="325" y1="90" x2="325" y2="140" stroke="#22c55e" stroke-width="2"/>
+      <line x1="175" y1="220" x2="325" y2="220" stroke="#22c55e" stroke-width="2"/>
+      <line x1="475" y1="220" x2="325" y2="220" stroke="#22c55e" stroke-width="2"/>
+      <line x1="325" y1="220" x2="325" y2="255" stroke="#22c55e" stroke-width="2"/>
+
+      <!-- To panel -->
+      <rect x="295" y="250" width="60" height="20" rx="4" fill="#0a2e1a" stroke="#22c55e" stroke-width="1"/>
+      <text x="305" y="263" fill="#22c55e" font-size="8" font-weight="bold">PE Barası</text>
+
+      <!-- Bentonit -->
+      <rect x="300" y="40" width="50" height="30" rx="2" fill="#8B6914" opacity=".3"/>
+      <text x="260" y="55" fill="#8B6914" font-size="7">BENTONİT</text>
+      <rect x="150" y="150" width="50" height="30" rx="2" fill="#8B6914" opacity=".3"/>
+      <text x="130" y="170" fill="#8B6914" font-size="7">BENTONİT</text>
+      <rect x="450" y="150" width="50" height="30" rx="2" fill="#8B6914" opacity=".3"/>
+      <text x="470" y="170" fill="#8B6914" font-size="7">BENTONİT</text>
+
+      <!-- Legend -->
+      <text x="10" y="15" fill="#8899b0" font-size="10">Üçgen topraklama düzeni (plan görünümü)</text>
+      <text x="10" y="30" fill="#8899b0" font-size="9">• Çubuklar arası minimum <strong>3 metre</strong></text>
+      <text x="10" y="45" fill="#8899b0" font-size="9">• Her çubuk: Q20 × 1.5m, 250µ kaplama</text>
+      <text x="10" y="60" fill="#8899b0" font-size="9">• Bağlantı: 25mm² örgülü bakır + kelepçe</text>
+      <text x="10" y="75" fill="#8899b0" font-size="9">• Bentonit: çubuk çevresine 10kg dağıtılır</text>
+      <text x="10" y="90" fill="#8899b0" font-size="9">• Test klemensi: PE barası ile çubuklar arası</text>
+      <text x="10" y="105" fill="#8899b0" font-size="9">• Hedef direnç: <strong>&lt;10Ω</strong> (TT şebeke için yeterli)</text>
+      <text x="10" y="120" fill="#22c55e" font-size="9">• Premium Tercih: <strong>&lt;5Ω</strong> (Ölçümler 3 nokta yöntemiyle toprak megeri ile yapılacak, multimetre kesinlikle kullanılmayacaktır)</text>
+    </svg>
+  </div>
+
+  <h3>Topraklama Adımları</h3>
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <strong>Çubukları çakın:</strong> 3 adet Q20×1.5m çubuğu en az 3m ara ile üçgen şeklinde toprağa çakın. Çubukların en az 50cm'si toprak seviyesinin altında kalmalı.
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <strong>Bentonit hazırlayın:</strong> 10kg bentonit tozunu suyla macun kıvamına getirin. Çubuk çevresindeki çukura dökün. Bentonit topraklama direncini düşürür ve nemi tutar.
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <strong>Kablo bağlantısı:</strong> 25mm² örgülü bakır kabloyu her çubuğa uygun kelepçe ile bağlayın. Tüm çubukları paralel bağlayın (daisy-chain değil, her çubuktan ayrı kol).
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <strong>Test klemensi takın:</strong> Topraklama ölçümleri için PE barası ile çubuk hattı arasına sökülebilir test klemensi koyun.
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <strong>Ölçüm yapın:</strong> Topraklama direncini ölçün (&lt;10Ω). Yüksek çıkarsa bentonit miktarını artırın veya 4. çubuğu ekleyin.
+    </div>
+  </div>
+
+  <div class="warning">
+    <p><strong>⚠️ BAĞIMSIZ LOKAL TT SİSTEMİ — POTANSİYEL TAŞINMASININ (EXPORTED POTENTIAL) ÖNLENMESİ:</strong> Bu sistem, Wall Connector beslemesi için bağımsız lokal TT sistemi olarak tasarlanmıştır. Ana panodan gelen 5×6mm² NYY kablonun içindeki sarı-yeşil (PE) toprak damarı lokal otopark panosunda hiçbir yere bağlanmayacak, ucu kesilip izole bantla körlenecektir. Lokal koruma topraklaması yalnızca bu sisteme ait topraklama elektrodu (3 adet Q20 bakır çubuk + bentonit) üzerinden sağlanır. Ana panodan gelen PE iletkeni bu lokal TT sistemine dahil edilmez. Bu tasarımın amacı, koruma topraklamasını lokal referansa dayandırmak ve farklı topraklama sistemleri arasında koruma iletkeni üzerinden potansiyel taşınmasını (exported potential) önlemektir.</p>
+  </div>
+
+  <div class="info">
+    <p><strong>ℹ️ TOPRAK KONTROLÜ (GROUND MONITOR) AYARI:</strong> Tesla WC'nin "Ground Monitor" (Earth Assurance) özelliği ilk kurulumda <strong>ENABLED (AÇIK)</strong> olarak başlatılacaktır. &lt;10Ω hedefli, bentonit takviyeli yeni bağımsız topraklama hattımız bu testi başarıyla geçecek güçtedir. Ancak kırsal şebeke dalgalanmaları nedeniyle istasyon nadiren <strong>2 kırmızı flaş</strong> (Earth assurance fault) hatası verirse veya 30mA RCD'de <strong>nuisance trip</strong> (gereksiz açma) görülürse, son çare olarak Tesla One App ➔ Installation Settings ➔ Ground Monitor üzerinden <strong>Disabled</strong> konumuna getirilecektir.</p>
+  </div>
+</section>
+
+<!-- ═══ 8 — KOMİSYONLAMA ═══ -->
+<section id="komisyonlama">
+  <h2><span class="icon">📱</span> Komisyonlama (Tesla One App)</h2>
+
+  <div class="warning">
+    <p><strong>⚠️ WiFi Yok:</strong> Çiftlikte WiFi bulunmadığından, Tesla WC kendi Hosted Access Point'ini (SSID) yayınlayacaktır. Komisyonlama için telefonunuzu WC'nin SSID'sine bağlayın. WC etiketi üzerindeki SSID ve WPA2 şifresini kullanın.</p>
+    <p style="margin-top:6px;"><strong>⚠️ TESLA UYARISI — KOMMİSYONLAMA GÜVENLİĞİ:</strong> Tesla kılavuzu sayfa 30: <strong>"Start the process only when the Wall Connector is powered on. Do not connect to any load when the face plate is separated from the main unit."</strong> Komisyonlamayı yalnızca WC enerjiliyken başlatın. Faceplate (ön kapak) ana üniteden ayrılmışken hiçbir yük (araç şarjı) bağlamayın.</p>
+  </div>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <strong>Tesla One App'i yükleyin</strong>
+      <p>App Store / Google Play'den Tesla One uygulamasını indirin. v10.8 veya üzeri olmalı.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <strong>Hesap oluşturun</strong>
+      <p>Tesla Partner Portal hesabınızla giriş yapın veya yeni hesap oluşturun.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <strong>QR Kod Okutun</strong>
+      <p>Quick Start Guide'daki QR kodu okutun. "Tesla Device Setup" → "Begin" → "Scan QR Code".</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <strong>Handle düğmesine basın</strong>
+      <p>Şarj kablosunun üzerindeki düğmeye 5 saniye basılı tutun. LED yeşil yanıp sönmeye başlayınca "Join" seçin.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <strong>Kurulum ayarları</strong>
+      <ul style="margin-left:18px; color:var(--text-dim);">
+        <li><strong>Country:</strong> Turkey</li>
+        <li><strong>Breaker Size:</strong> 40A (ana kesici 40A'a ayarlı)</li>
+        <li><strong>WiFi:</strong> Atla (WiFi yok, hosted AP'de kal)</li>
+        <li><strong>Ground Monitor:</strong> <strong style="color:#22c55e;">ENABLED (AÇIK)</strong> — İlk kurulumda açık bırakılır. &lt;10Ω topraklama testi geçilmelidir. Kırsal şebeke dalgalanmaları 2 kırmızı LED hatasına veya RCD nuisance trip'e yol açarsa <strong style="color:#ef4444;">son çare Disabled</strong>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <strong>Maksimum Akım Ayarı</strong>
+      <p><strong>Trifaze 16A (11 kW)</strong> olarak sabitlenecektir. Tesla One App komisyonlama menüsünde Breaker Size: 40A, maksimum akım: 16A seçilir. Tesla EV'nin onboard şarj cihazı donanımsal olarak trifazede 16A'de kilitlidir — bu değer hem kablo güvenliği hem sistem kararlılığı için optimumdur.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">7</div>
+    <div class="step-body">
+      <strong>Kayıt</strong>
+      <p>Installer registration ve Customer registration tamamlayın. Araç sahibinin email adresini girin. Garanti aktivasyonu için bu adım zorunludur.</p>
+    </div>
+  </div>
+
+  <div class="info" style="margin-top:20px;">
+    <p><strong>📱 Kırsal Altyapı Notu (İnternetsiz İşletme):</strong> Şarj istasyonumuzda lokal WiFi altyapısı bulunmadığından Tesla Wall Connector güncellemeleri otomatik olarak alınamayacaktır. Sistemin yazılımsal kararlılığını korumak adına, <strong>periyodik olarak (6 ayda bir)</strong> akıllı telefonunuzu Tesla WC'nin kendi SSID yayınına bağlayıp Tesla One App ➔ Software Update menüsü üzerinden manuel firmware güncelleme kontrolü yapmanız önemle tavsiye edilir.</p>
+  </div>
+
+  <div class="info" style="margin-top:12px;">
+    <p><strong>🔍 Pano Kapağı Uyarısı (Opak Tasarım):</strong> Panonun kapağı IP65 koruma standartlarında opak (mat gri) tasarıma sahip olduğundan, K1 ENTES ekranındaki anlık şebeke voltaj değerlerini gözlemlemek için pano ön kapağının manuel olarak açılması gerekmektedir.</p>
+  </div>
+</section>
+
+<!-- ═══ 9 — LED KODLARI ═══ -->
+<section id="led">
+  <h2><span class="icon">💡</span> LED Gösterge & Hata Kodları</h2>
+  <p style="color:var(--text-dim); margin-bottom:16px;"><strong>📌 Not:</strong> Wall Connector bir şebeke anormalliğinde hata kodu üretir ve şarjı durdurur. <strong>Spesifik LED kodları için güncel firmware kılavuzuna bakılmalıdır.</strong> Aşağıdaki tablolar Gen 3 WC firmware v22.33.1+ referans alınarak hazırlanmıştır — firmware güncellemeleriyle hata kodlarının davranışı değişebilir.</p>
+
+  <div class="tabs" id="ledTabs">
+    <button class="tab-btn active" onclick="switchTab('ledTabs','ledNormal')">Normal Durum</button>
+    <button class="tab-btn" onclick="switchTab('ledTabs','ledError')">Hata Kodları</button>
+    <button class="tab-btn" onclick="switchTab('ledTabs','ledEVSE')">EVSE İletişim</button>
+  </div>
+
+  <div id="ledNormal" class="tab-content active">
+    <table class="led-table">
+      <thead><tr><th>LED Durumu</th><th>Anlamı</th><th>Açıklama</th></tr></thead>
+      <tbody>
+        <tr><td><span class="led"><span class="led-dot off"></span><span class="led-dot off"></span></span></td><td>Startup</td><td>7 LED 5 saniye tam yanar, ardından normal duruma geçer</td></tr>
+        <tr><td><span class="led"><span class="led-dot green"></span> (üst)</span></td><td>Beklemede / Şarja hazır</td><td>WC şarja hazır, araç bağlı değil</td></tr>
+        <tr><td><span class="led"><span class="led-dot green"></span> (akıcı)</span></td><td>Şarj devam ediyor</td><td>Her yeşil LED sırayla yanar — şarj aktif</td></tr>
+        <tr><td><span class="led"><span class="led-dot blue"></span> (sabit)</span></td><td>SSID yayında / komisyonlama</td><td>WC kendi WiFi'ını yayınlıyor, komisyonlanmayı bekliyor</td></tr>
+        <tr><td><span class="led"><span class="led-dot yellow"></span></span></td><td>Yeşil+Kırmızı (sarı)</td><td>Komisyonlanmayı bekliyor</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="ledError" class="tab-content">
+    <table class="led-table">
+      <thead><tr><th>Kod</th><th>Ne Anlama Gelir</th><th>Ne Yapmalı</th></tr></thead>
+      <tbody>
+        <tr><td><span class="led"><span class="led-dot off"></span><span class="led-dot off"></span></span></td><td>Hiç LED yanmıyor</td><td>Güç yok. Şalteri kontrol et. Multimetre ile terminal blokta gerilim ölç. L-N 230V, L-L 400V olmalı</td></tr>
+        <tr><td><span class="led"><span class="led-dot red"></span> (sabit)</span></td><td>İç hata, şarj devre dışı</td><td>Şalteri kapat 5sn bekle, tekrar aç. Düzelmezse Tesla Support</td></tr>
+        <tr><td><span class="led"><span class="led-dot red"></span> ×1</span></td><td>Toprak kaçağı / güvenli olmayan akım yolu</td><td>Kablo, şarj soketi, WC ve araç girişini hasar/su için kontrol et</td></tr>
+        <tr><td><span class="led"><span class="led-dot red"></span> ×2</span></td><td>Toprak direnci yüksek (Earth assurance fault)</td><td>Topraklama bağlantılarını kontrol et. TT ise toprak monitör ayarını kontrol et/devre dışı bırak</td></tr>
+        <tr><td><span class="led"><span class="led-dot red"></span> ×3</span></td><td>Yüksek sıcaklık, şarj sınırlı/kesik</td><td>Terminal torklarını kontrol et (Wirebox: 5.6 Nm, şalt: 2.5–3.0 Nm). Kablo kesiti yeterli mi? WiFi'a bağlanıp firmware güncelle</td></tr>
+        <tr><td><span class="led"><span class="led-dot red"></span> ×4</span></td><td>İnternet bağlantısı kayboldu</td><td>WiFi sinyalini kontrol et. WiFi yoksa normal — görmezden gel</td></tr>
+        <tr><td><span class="led"><span class="led-dot red"></span> ×5</span></td><td>Grup güç yönetimi iletişim sorunu</td><td>Tek WC varsa sorun yok. Birden çok WC varsa WiFi bağlantılarını kontrol et</td></tr>
+        <tr><td><span class="led"><span class="led-dot red"></span> ×6</span></td><td>Aşırı gerilim / zayıf şebeke kalitesi</td><td>ENTES GKRC-02F ayarlarını kontrol et. Multimetre ile gerilimleri ölç</td></tr>
+        <tr><td><span class="led"><span class="led-dot red"></span> ×7</span></td><td>Araç aşırı akımı</td><td>Araç şarj akımını düşür. Tesla araçsa VIN ve saat kaydıyla Tesla Support</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="ledEVSE" class="tab-content">
+    <table class="led-table">
+      <thead><tr><th>LED</th><th>Anlamı</th></tr></thead>
+      <tbody>
+        <tr><td><span class="led"><span class="led-dot blue"></span> sabit</span></td><td>Araca bağlı, EVSE hazır, araç şarj talep etmiyor (planlı şarj, vs.)</td></tr>
+        <tr><td><span class="led"><span class="led-dot blue"></span> nefes alır gibi</span></td><td>Araç ile iletişim kuruluyor</td></tr>
+        <tr><td><span class="led"><span class="led-dot blue"></span> ×2 flash</span></td><td>Araca bağlı, EVSE şarja hazır değil (ayarları kontrol et: planlı şarj, erişim kontrolü)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══ 10 — GÜVENLİK ═══ -->
+<section id="safety">
+  <h2><span class="icon">🛡️</span> Güvenlik & Uyarılar</h2>
+
+  <div class="warning">
+    <p><strong>⚠️ ÖLÜMCÜL TEHLİKE — Elektrik Çarpması Riski</strong></p>
+    <p>• Tüm bağlantıları ana şalter KAPALIYKEN yapın.<br>
+    • Multimetre ile gerilim yokladığınızdan emin olmadan kablolara dokunmayın.<br>
+    • Trifaze 400V ölümcüldür (fazlar arası).</p>
+  </div>
+
+  <div class="warning">
+    <p><strong>⚠️ Yangın Riski</strong></p>
+    <p>• Tüm terminal vidalarını uygun tork değerinde sıkın: <strong>Wirebox: 5.6 Nm, Şalt cihazları (QF2/FI1/KM1/F1): üretici katalog torku (tipik 2.5–3.0 Nm).</strong> Gevşek bağlantı ısınır ve yangına yol açar.<br>
+    • 6mm² altı kesit kullanmayın (WC wirebox 4mm² min. kabul eder).<br>
+    • NYY kablonun spiral boru içinde olduğundan emin olun.</p>
+  </div>
+
+  <div class="info">
+    <p><strong>📋 Tesla WC Özellikleri</strong></p>
+    <p>• IP55 koruma (kutudan çıktığı gibi) — sızdırmazlık için ek silikon, mastik veya yapıştırıcı KESİNLİKLE KULLANILMAYACAKTIR. Vidaların contalı pulları sızdırmazlık için yeterlidir.<br>
+    • <strong>Cihazın en altında bulunan fabrikasyon yoğuşma suyu tahliye deliği kesinlikle kapatılmamalı, açık bırakılmalıdır.</strong> Bu delik kullanılmadığı takdirde cihaz içinde nem birikir ve elektronik aksam zarar görebilir.<br>
+    • Dahili Tip A + DC 6mA RCD (RCD-DD) — harici kaçak akım rölesine rağmen kendi koruması aktiftir.<br>
+    • <strong>Mühendislik Notu:</strong> Tesla WC içerisinde dahili Tip A + DC 6mA kaçak akım algılama sistemi (RCD-DD) bulunduğundan, harici panoda <strong>Tip B RCD kullanılmasına gerek yoktur</strong>; mevcut Siemens Tip A 30mA FI1 rölesi regülasyonlara tam uyumludur.<br>
+    • Terminal bloğu: 4-25mm² stranded / 1.5-20mm² solid, BAKIR sadece.<br>
+    • Çalışma sıcaklığı: -30°C ~ +50°C — açık hava kış koşulları için yeterli.<br>
+    • <strong>Termal Derating:</strong> Tesla kılavuzu sayfa 15: Nadir durumlarda 35°C ortam sıcaklığında akımı otomatik düşürmeye başlayabilir. Ayarlamalar otomatiktir, sıcaklık normale döndüğünde başlangıç akımına geri döner.<br>
+    • <strong>Güç Kesintisi (Power Outage):</strong> Şarj sırasında elektrik kesilirse, geri geldikten 1-3 dakika sonra şarj otomatik devam eder (solid blue LED). Handle düğmesine basarak anında devam da ettirilebilir. (Bkz. kılavuz sayfa 14)</p>
+  </div>
+
+  <div class="tip">
+    <p><strong>✅ PROFESYONEL DEVREYE ALMA KONTROL LİSTESİ (KRONOLOJİK SIRA)</strong></p>
+    <p>
+    <strong>1.</strong> <strong>Enerjisiz İzolasyon ve Süreklilik Kontrolü:</strong> Multimetre/Megger ile faz-faz, faz-nötr, faz-PE arası yalıtım direnci ölçülmeli (açık devre olmalı). Lokal PE barasından Q20 çubuklarına kadar kesintisiz iletim doğrulanmalı.<br>
+    <strong>2.</strong> <strong>3 Nokta Yöntemiyle Topraklama Direnci Ölçümü:</strong> Hedef &lt;10Ω, premium tercih &lt;5Ω. Multimetre kesinlikle kullanılmaz — toprak megeri şart.<br>
+    <strong>3.</strong> <strong>İlk Enerji Verme ve Faz Sırası Kontrolü:</strong> Sırayla QF2 → FI1 → QF1 açılır. Faz sırası L1-L2-L3 doğrulanır.<br>
+    <strong>4.</strong> <strong>Hat Gerilimlerinin Doğrulanması:</strong> Faz-Nötr: 230V AC (±%10), Faz-Faz: 400V AC (±%10) multimetre ile ölçülür.<br>
+    <strong>5.</strong> <strong>SPD1 (Parafudr) Göstergesinin Yeşil Olduğunun Doğrulanması:</strong> Citel üzerindeki durum LED'i yeşil yanıyor olmalı.<br>
+    <strong>6.</strong> <strong>K1 (ENTES) Rölesinin Voltajı Onaylayıp KM1 (Kontaktörü) Çektirmesi:</strong> ENTES normal voltaj aralığını onaylamalı, KM1 duyulur şekilde çekmelidir.<br>
+    <strong>7.</strong> <strong>"Double Check Nötr" Testi:</strong> Faceplate takılmadan önce wirebox N terminalinde PE'ye göre &gt;264V gerilim olmadığı multimetre ile teyit edilir. <strong>UYARI: Faceplate ayrıyken sisteme tam şarj yükü verilmemelidir!</strong><br>
+    <strong>8.</strong> <strong>Tesla One App ile Komisyonlama:</strong> WC kendi SSID'sine bağlanılır. Breaker Size: 40A, maksimum akım: 16A (11 kW) olarak ayarlanır. Ground Monitor: ENABLED. Installer + Customer registration tamamlanır.<br>
+    <strong>9.</strong> <strong>Araç Bağlantısı ve İlk Şarj Testinin Başlatılması:</strong> Araç şarja takılır, yeşil akıcı LED gözlemlenir, araç ekranından şarj akımı doğrulanır (16A/11 kW).<br>
+    <strong>10.</strong> <strong>30 Dakika Kesintisiz Şarj Sonrası Termal Kontrol:</strong> Subjektif el kontrollerinden kaçınmak adına, tüm terminaller (QF2 üst/alt, FI1 üst/alt, KM1 üst/alt, wirebox) <strong>Temassız Kızılötesi (IR) Termometre/Lazer Isı Ölçer tabanca</strong> ile taranmalıdır. <strong>Yüksek akım altında 70°C ve üzerini gören klemens vidaları usta tarafından yeniden torklanmalıdır.</strong> Hiçbir noktada anormal ısınma olmamalıdır.</p>
+  </div>
+
+  <div class="warning" style="margin:16px 0; border:3px solid var(--red); border-radius:8px; background:#1a0508;">
+    <p style="font-size:1rem; text-align:center; color:#fff; margin-bottom:10px;"><strong>⚠️ ENERJİ VERİLMEDEN ÖNCE SON KONTROL DİREKTİFİ</strong></p>
+    <p style="color:#fca5a5; text-align:center;">
+    TÜM GÜÇ TERMİNALLERİ UYGUN TORK DEĞERLERİNDE (WIREBOX: 5.6 NM, ŞALT CİHAZLARI: ÜRETİCİ KATALOĞU 2.5–3.0 NM) SIKILACAK,<br>
+    İZOLASYON VE SÜREKLİLİK KONTROLLERİ TAMAMLANACAK,<br>
+    ARDINDAN İLK ENERJİ VERİLECEKTİR.<br><br>
+    İLK 30 DAKİKA TAM YÜKTE ŞARJ ESNASINDA TÜM TERMİNALLER VE KABLOLAR<br>
+    SICAKLIK AÇISINDAN <strong>TEMASSIZ KIZILÖTESİ (IR) TERMOMETRE/LAZER ISI ÖLÇER TABANCA</strong> İLE TARANMALIDIR.<br>
+    <strong>70°C VE ÜZERİNİ GÖREN KLEMENS VİDALARI YENİDEN TORKLANMALIDIR.</strong>
+    </p>
+  </div>
+
+  <div class="warning" style="margin:16px 0;">
+    <p><strong>⚠️ HARİCİ + DAHİLİ RCD KASKADI — NUISANCE TRIP RİSKİ:</strong> Tesla Wall Connector'ın <strong>dahili Tip A + DC 6mA RCD'si</strong> (AC kaçak için 20mA'de trip) ve harici <strong>Siemens 30mA Tip A RCD</strong> seri bağlı çalışır. Tesla kılavuzu, Ground Monitor özelliğinin harici hassas RCD'lerde istenmeyen açmalara (nuisance trip) yol açabileceği konusunda özellikle uyarır (bkz. sayfa 14: "…where the current induced by this check would be problematic (as is the case on some TT networks with sensitive residual-current devices)"). Bu nedenle:<br>
+    • <strong>Ground Monitor ilk kurulumda ENABLED başlatılır,</strong> ancak harici RCD'de gereksiz trip yaşanırsa Disabled yapılabilir.<br>
+    • Harici RCD'nin periyodik testleri bu etkileşimden bağımsızdır — test butonu mekanik fonksiyonu kontrol eder.</p>
+  </div>
+
+  <div class="tip" style="border-left-color:var(--amber); background:#1a1a08;">
+    <p><strong>🔔 RCD Periyodik Test Hatırlatması:</strong> Can ve mal güvenliğinin sürdürülebilirliği adına, lokal panoda bulunan <strong>Siemens 5SV3346-6 Tip A Kaçak Akım Rölesi</strong> üzerindeki fiziksel <strong>'T' (Test) butonuna</strong> basılarak <strong>ayda bir kez</strong> periyodik mekanik açma testi gerçekleştirilmeli, rölenin hattı başarıyla kestiği gözle doğrulanmalıdır.</p>
+  </div>
+
+  <div class="warning">
+    <p><strong>⚠️ BLACKOUT ENGELLEME — ANA PANO BAĞLANTI NOKTASI:</strong> 5×6mm² NYY WC besleme hattı, Ana panodaki mevcut ana kaçak akım rölesinin (30mA veya 300mA) çıkışına KESİNLİKLE bağlanmamalıdır. Bağlanırsa, araç şarj olurken yaşanacak en ufak DC sızıntıda veya parafudrun anlık tepkilerinde tesisteki tüm yüklerin (kameralar, aydınlatma vb.) elektriği kesilir.</p>
+    <p style="margin-top:6px;"><strong>NOT — SELEKTİVİTE & KABLO GÜVENLİĞİ:</strong> Ana panodaki 50A sigorta hattın kısa devre korumasını sağlarken, otopark panosundaki 40A sigorta yerel şalter vazifesi görür. 6mm² NYY kablonun boru içindeki akım taşıma kapasitesi sınırda olduğundan, 50A sigorta kabloyu aşırı yük (overload) bölgesinde tam koruyamaz, ancak kısa devrelere karşı milisaniyede tam koruma sağlar. <strong>Sahada aşırı yük olasılığı son derece düşüktür:</strong> Hat sadece Tesla WC'ye ait müstakil bir otobandır. Aracın OBC'si donanımsal olarak trifazede 16A'e kilitlidir ve hatta başka hiçbir yük bağlanmaz. Hat ya 16A çekecek ya da kısa devrede sigorta anında kesecektir — kablonun erime senaryosu pratik olarak mümkün değildir.</p>
+    <p style="margin-top:4px; font-size:.82rem;"><strong>🔧 C ve C Eğrisi Selektivite Şerhi:</strong> 50A (C eğrisi) ve 40A (C eğrisi) kesiciler arasında tam selektivite yüksek kısa devre akımlarında garanti edilemeyebilir. Arıza durumunda her iki sigortanın da aynı anda açabileceği sahada bilinmelidir. <strong>Bu bir güvenlik riski değil, sadece konfor meselesidir</strong> — en kötü senaryoda şarj durur, ana panoya yürüyüp şalteri geri kaldırırsınız. Sisteme veya araca zerre zararı yoktur. Dağıtım şirketi (DSO) mühürlü alanlarına müdahale edilmeden ana sayaç çıkış barasından hat alınmalıdır.</p>
+  </div>
+
+  <div class="info">
+    <p><strong>ℹ️ GROUND MONITOR — TOPRAK KONTROLÜ:</strong> Ayarlı RCD (30mA Tip A) ve yeni tesis edilmiş bağımsız topraklama (&lt;10Ω hedef, bentonit takviyeli) ile Tesla WC'nin "Earth Assurance" özelliği ilk etapta <strong>ENABLED</strong> bırakılır. Sistemin kendi toprak kalitesi testini geçmesi beklenir. Eğer kırsal şebeke dalgalanmaları nedeniyle <strong>2 kırmızı LED</strong> (Earth assurance fault) görülür veya 30mA RCD'de nuisance trip yaşanırsa, son çare olarak Tesla One App ➔ Installation Settings ➔ Ground Monitor ➔ <strong>Disabled</strong> yapılır.</p>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<div style="border-top:1px solid var(--border); padding:24px 0 12px; text-align:center;">
+  <p style="font-size:.82rem; color:var(--text-dim);">
+    Tesla Wall Connector Kurulum Rehberi · 2026<br>
+    11 kW AC Trifaze · Bağımsız TT Topraklama<br>
+    Son güncelleme: Temmuz 2026
+  </p>
+</div>
+
+</div>
+
+<script>
+// ─── Intersection Observer for active nav ───
+(function(){
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        navLinks.forEach(l => l.classList.remove('active'));
+        const match = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+        if(match) match.classList.add('active');
+      }
+    });
+  }, { rootMargin:'-80px 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+})();
+
+// ─── Tab switching ───
+function switchTab(tabsContainerId, tabId) {
+  const container = document.getElementById(tabsContainerId);
+  const btns = container.querySelectorAll('.tab-btn');
+  const contents = container.parentElement.querySelectorAll('.tab-content');
+  btns.forEach(b => b.classList.remove('active'));
+  contents.forEach(c => c.classList.remove('active'));
+  container.querySelector(`[onclick*="${tabId}"]`).classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+// ─── Scroll reveal animation ───
+(function(){
+  const cards = document.querySelectorAll('.card');
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold:0.1 });
+  cards.forEach(c => {
+    c.style.opacity = '0';
+    c.style.transform = 'translateY(20px)';
+    c.style.transition = 'opacity .5s ease, transform .5s ease';
+    revealObserver.observe(c);
+  });
+})();
+</script>
+
+</body>
+</html>
