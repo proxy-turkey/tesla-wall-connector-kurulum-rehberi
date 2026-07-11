@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: ⚠️ Kurulum Sorunu (Issue AÇMAYIN)
+    url: https://github.com/proxy-turkey/tesla-wall-connector-kurulum-rehberi/blob/main/README.md
+    about: Bu repo bir bilgi rehberidir. Kurulum teknik desteği vermiyoruz. Lisanslı bir elektrikçiye danışın.
