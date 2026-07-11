@@ -1,0 +1,31 @@
+Kategori,Malzeme Detayı / Teknik Özellik,Adet/Metraj,Endüstriyel Kod
+Pano Kutusu,Çetinkaya CP 5107 ABS Dağıtım Panosu (Opak Kapaklı, IP65, 3 Sıra x 15 Modül = 45 Otomat Kapasiteli, 35×50×19.5 cm, RAL 7030 Gri),1 Adet,—
+Parafudr,Citel DS104RS-230/G/TR 100kA 4 Kutuplu B+C+D (Tip I+II+III),1 Adet,SPD1
+Ana Pano Sigortası,Siemens 5SL6650-7YA (4P 50A C Sınıfı 6kA) — Ana Ev Panosu İçi (QF1),1 Adet,QF1
+Lokal Pano Şalteri,Siemens 5SL6640-7YA (4P 40A C Sınıfı 6kA) — WC Panosu Girişi (QF2),1 Adet,QF2
+Kaçak Akım Rölesi,Siemens 5SV3346-6 (4P 63A 30mA Tip A) (FI1),1 Adet,FI1
+Gerilim Koruma Rölesi,ENTES GKRC-02F Gerilim Koruma Rölesi (K1),1 Adet,K1
+Güç Kontaktörü,Siemens 5TT5840-0 (4NO 40A 230V AC Bobin — AC-1 sınıfı) (KM1),1 Adet,KM1
+Kumanda Sigortası,Siemens 5SL6102-7 (1P 2A C Sınıfı 6kA) — Kumanda Sigortası (F1),1 Adet,F1
+Topraklama Çubuğu,Q20 mm × 1.5 Metre 250 Mikron Bakır Kaplama Çubuk,3 Adet,—
+Topraklama Kablosu,25mm² Örgülü Som Bakır Kablo,12 Metre,—
+Besleme Kablosu,5×6mm² NYY Güç Kablosu,5 Metre,—
+Pano İçi Güç Köprüleri,6mm² NYAF Kablo (4 Farklı Renk × 3'er Metre),12 Metre,—
+Pano İçi Kumanda Hattı,1.5mm² NYAF Kablo,2 Metre,—
+Bağlantı Barası,DIN Ray Tipi En Az 6 Delikli Nötr Barası,1 Adet,—
+Bağlantı Barası,DIN Ray Tipi En Az 6 Delikli Toprak Barası,1 Adet,—
+Kablo Sarfı,6mm² İzoleli + İkiz Yüksük (NYAF Uçları İçin),20 Adet,—
+Kablo Sarfı,1.5mm² İzoleli Yüksük (Kumanda Uçları İçin),10 Adet,—
+Sızdırmazlık,PG21 Kablo Rakoru (Pano ve WC Girişleri İçin),4 Adet,—
+Topraklama Bağlantısı,25mm² Kabloyu Q20 Çubuğa Tespit Kelepçesi,3 Adet,—
+Mekanik Zırh,Çelik Spiral Boru Ø25mm (PG21 Rakor Uyumlu Dış Ortam),10 Metre,—
+Mekanik Tespit,6mm Beton Dübel (Tesla WC Wirebox'ı Duvara Sabitlemek İçin — Kutu İçeriğinde 2 Adet Vida Vardır),2 Adet,—
+Mekanik Tespit,8mm veya 10mm Ağır Hizmet Roket/Çelik Dübel (Metal Pano İçin),4 Adet,—
+Mekanik Tespit,Beton Çivili Çelik Kroşe (Borular ve Kablolar İçin),15 Adet,—
+Pano Aksesuarı,Uyarı Etiketi (1 Adet) + Kablo Bağı (10 Adet) + Yapışkanlı Isı Shrink (4 Adet),1 Set,—
+Topraklama Katkısı,Bentonit Direnç Düşürücü Topraklama Tozu,10 KG,—
+Topraklama Elemanı,Topraklama Test Klemensi (Ölçüm Odası İçin),1 Adet,—
+Usta El Aletleri (Sarf),Bakır Gresi (Copper Grease) — Korozyon Önleyici (Ustanın Çantasından),1 Tüp,—
+Usta El Aletleri (Cihaz),Torklu Tornavida / Tork Anahtarı (5.6 Nm Ayarlı — Ustanın Çantasından),1 Adet,—
+Usta El Aletleri (Cihaz),Topraklama Direnci Ölçüm Cihazı (Toprak Megeri — Ustanın Çantasından),1 Adet,—
+Usta El Aletleri (Cihaz),Darbeli Matkap (Hilti) ve Duvar Tipi Uygun Elmas Uçlar (Ustanın Çantasından),1 Set,—
